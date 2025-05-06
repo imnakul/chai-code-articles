@@ -56,11 +56,11 @@ export async function getGitHubEmail(githubUrl) {
 }
 
 // Example usage
-const githubUrl = 'https://github.com/ShriyashParandkar23' // Replace with the GitHub profile URL
-getGitHubEmail(githubUrl).then((email) => {
-   if (email) {
-      console.log(`Email found: ${email}`)
-   } else {
-      console.log('Email could not be found.')
-   }
-})
+// const githubUrl = 'https://github.com/ShriyashParandkar23' // Replace with the GitHub profile URL
+// getGitHubEmail(githubUrl).then((email) => {
+//    if (email) {
+//       console.log(`Email found: ${email}`)
+//    } else {
+//       console.log('Email could not be found.')
+//    }
+// })
