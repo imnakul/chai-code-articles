@@ -8,8 +8,8 @@ export default function Navbar() {
             {/* Left side: Logo and Title */}
             <div className='flex items-center justify-center gap-2'>
                <img src='/public/icon.svg' alt='Logo' className='size-12 ' />
-               <h1 className='text-3xl text-emerald-500 font-semibold'>
-                  Hashnode-ArticleFetcher
+               <h1 className='text-3xl text-emerald-500 font-bold'>
+                  Hashnode: Article Fetcher
                </h1>
             </div>
 

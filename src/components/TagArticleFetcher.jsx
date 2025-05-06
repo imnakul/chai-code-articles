@@ -13,6 +13,7 @@ import {
    FaSpinner,
 } from 'react-icons/fa'
 import Navbar from './Navbar'
+import { sendEmail } from '../functions/sendEmail'
 
 export default function TagArticleFetcher() {
    const [tag1, setTag1] = useState('')
@@ -27,6 +28,7 @@ export default function TagArticleFetcher() {
    const [title, setTitle] = useState('')
    const [feedback, setFeedback] = useState('')
 
+   //~ Fetching Articles
    const handleSubmit = async (e) => {
       e.preventDefault()
       setLoading(true)
@@ -78,16 +80,30 @@ export default function TagArticleFetcher() {
       setLoading(false)
    }
 
-   useEffect(() => {
-      console.log('articles', articles)
-      console.log('socials', socials)
-   }, [articles])
+   // useEffect(() => {
+   //    console.log('articles', articles)
+   //    console.log('socials', socials)
+   // }, [articles])
+
+   //~ FeedBack submit
+   const handleFeedbackSubmit = async (e) => {
+      e.preventDefault()
+      await sendEmail(userEmail, authorEmail, title, feedback)
+         .then((res) => {
+            console.log('Feedback sent successfully', res)
+         })
+         .catch((err) => {
+            console.error('Error sending feedback', err)
+         })
+   }
 
    return (
       <>
          {/* <div className='min-h-screen bg-gradient-to-b from-gray-800 via-white-900 to-gray-800 text-white w-full'> */}
          <div className='bg-[linear-gradient(to_right,_rgb(58,28,113),_rgb(215,109,119),_rgb(255,175,123))] min-h-screen'>
             <Navbar />
+
+            {/* //?? Loading  */}
             {loading ? (
                <div className='flex flex-col items-center justify-center h-screen'>
                   <FaSpinner className='text-white text-6xl animate-spin mb-4' />
@@ -101,64 +117,79 @@ export default function TagArticleFetcher() {
                </div>
             ) : (
                <>
-                  <form
-                     onSubmit={handleSubmit}
-                     className='bg-gray-800/60 p-12 rounded-lg shadow-lg max-w-2xl mx-auto my-12'
-                  >
-                     <h2 className='text-4xl font-bold mb-8 text-center text-white'>
-                        Find Articles by Tags
-                     </h2>
+                  {/* //?? FORM  */}
+                  <div className='max-w-5xl  flex items-center justify-around mx-auto gap-20'>
+                     <img
+                        src='/chaicode.jpg'
+                        alt='Logo'
+                        className='animate-pulse hover:scale-105 transition-all duration-800 ease-in-out'
+                     />
+                     <form
+                        onSubmit={handleSubmit}
+                        className='bg-gray-800/60 p-12 rounded-lg shadow-lg min-w-xl mx-auto my-12'
+                     >
+                        <h2 className='text-4xl font-bold mb-8 text-center text-white'>
+                           Find Articles by Tags
+                        </h2>
 
-                     <div className='mb-6'>
-                        <label className='block mb-2 text-white font-medium'>
-                           Tag 1 - small letters only , this is the title slug
-                        </label>
-                        <input
-                           type='text'
-                           value={tag1}
-                           onChange={(e) => setTag1(e.target.value)}
-                           className='w-full border border-gray-600 bg-gray-400/60 px-5 py-3 rounded focus:outline-none focus:ring-2 focus:ring-white-500 text-white'
-                           placeholder='e.g., chaicode'
-                           required
-                        />
-                     </div>
+                        <div className='mb-6'>
+                           <label className='block mb-2 text-white font-medium'>
+                              Tag 1 - small letters only , this is the title
+                              slug
+                           </label>
+                           <input
+                              type='text'
+                              value={tag1}
+                              onChange={(e) => setTag1(e.target.value)}
+                              className='w-full border border-gray-600 bg-gray-400/60 px-5 py-3 rounded focus:outline-none focus:ring-2 focus:ring-white-500 text-white'
+                              placeholder='e.g., chaicode'
+                              required
+                           />
+                        </div>
 
-                     <div className='mb-6'>
-                        <label className='block mb-2 text-white font-medium'>
-                           Tag 2 - small letters only , this is the title slug
-                        </label>
-                        <input
-                           type='text'
-                           value={tag2}
-                           onChange={(e) => setTag2(e.target.value)}
-                           className='w-full border border-gray-600 bg-gray-400/60 px-5 py-3 rounded focus:outline-none focus:ring-2 focus:ring-white-500 text-white'
-                           placeholder='e.g., rag'
-                           required
-                        />
-                     </div>
+                        <div className='mb-6'>
+                           <label className='block mb-2 text-white font-medium'>
+                              Tag 2 - small letters only , this is the title
+                              slug
+                           </label>
+                           <input
+                              type='text'
+                              value={tag2}
+                              onChange={(e) => setTag2(e.target.value)}
+                              className='w-full border border-gray-600 bg-gray-400/60 px-5 py-3 rounded focus:outline-none focus:ring-2 focus:ring-white-500 text-white'
+                              placeholder='e.g., rag'
+                              required
+                           />
+                        </div>
 
-                     <div className='mb-8'>
-                        <label className='block mb-2 text-white font-medium'>
-                           Pages to Fetch [ 1 Page = 50 Articles ]
-                        </label>
-                        <input
-                           type='number'
-                           value={pages}
-                           onChange={(e) => setPages(Number(e.target.value))}
-                           className='w-full border border-gray-600 bg-gray-400/60 px-5 py-3 rounded focus:outline-none focus:ring-2 focus:ring-white-500 text-white'
-                           min={1}
-                           required
-                        />
-                     </div>
-                     <div className='flex justify-center'>
-                        <button
-                           type='submit'
-                           className=' bg-white/50 hover:bg-white-700 text-black font-bold py-3 px-5 rounded-md border border-emerald-500 mx-auto transition-all  hover:scale-95 duration-300 '
-                        >
-                           Search
-                        </button>
-                     </div>
-                  </form>
+                        <div className='mb-8'>
+                           <label className='block mb-2 text-white font-medium'>
+                              Pages to Fetch [ 1 Page = 50 Articles ]
+                           </label>
+                           <input
+                              type='number'
+                              value={pages}
+                              onChange={(e) => setPages(Number(e.target.value))}
+                              className='w-full border border-gray-600 bg-gray-400/60 px-5 py-3 rounded focus:outline-none focus:ring-2 focus:ring-white-500 text-white'
+                              min={1}
+                              required
+                           />
+                        </div>
+                        <div className='flex justify-center'>
+                           <button
+                              type='submit'
+                              className=' bg-white/50  text-black font-bold py-3 px-5 rounded-md border border-emerald-500 mx-auto transition-all  hover:scale-95 duration-300 hover:bg-gray-600'
+                           >
+                              Search
+                           </button>
+                        </div>
+                     </form>
+                     {/* <img
+                        src='/chaicode.jpg'
+                        alt='Logo'
+                        className='animate-pulse'
+                     /> */}
+                  </div>
 
                   {articles.length > 0 && (
                      <>
@@ -330,7 +361,10 @@ export default function TagArticleFetcher() {
                                     <h3 className='text-2xl font-bold text-gold-400 mb-6 mx-auto'>
                                        Feedback Section
                                     </h3>
-                                    <form className='space-y-2'>
+                                    <form
+                                       className='space-y-2'
+                                       onSubmit={handleFeedbackSubmit}
+                                    >
                                        <div>
                                           <label
                                              className='block text-gray-300 font-medium mb-2'
