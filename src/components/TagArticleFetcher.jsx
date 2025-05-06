@@ -14,6 +14,15 @@ import {
 } from 'react-icons/fa'
 import Navbar from './Navbar'
 import { sendEmail } from '../functions/sendEmail'
+import Modal from './Modal'
+import { FaUserCircle } from 'react-icons/fa'
+import { auth, provider } from '../functions/firebaseConfig.js'
+import {
+   signInWithPopup,
+   signOut,
+   onAuthStateChanged,
+   getIdToken,
+} from 'firebase/auth'
 
 export default function TagArticleFetcher() {
    const [tag1, setTag1] = useState('')
@@ -22,11 +31,14 @@ export default function TagArticleFetcher() {
    const [loading, setLoading] = useState(false)
    const [articles, setArticles] = useState([])
    const [socials, setSocials] = useState({})
+   const [showModal, setShowModal] = useState(false)
 
    const [authorEmail, setAuthorEmail] = useState('')
    const [userEmail, setUserEmail] = useState('imnakul44@gmail.com')
    const [title, setTitle] = useState('')
    const [feedback, setFeedback] = useState('')
+   const [loggedIn, setLoggedIn] = useState(false)
+   const [authToken, setAuthToken] = useState('')
 
    //~ Fetching Articles
    const handleSubmit = async (e) => {
@@ -80,10 +92,45 @@ export default function TagArticleFetcher() {
       setLoading(false)
    }
 
-   // useEffect(() => {
-   //    console.log('articles', articles)
-   //    console.log('socials', socials)
-   // }, [articles])
+   //~ Authentication - Login + Logout
+   useEffect(() => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+         if (user) {
+            setLoggedIn(true)
+            getIdToken(user).then((token) => {
+               setAuthToken(token)
+            })
+         } else {
+            setLoggedIn(false)
+            setAuthToken('')
+         }
+      })
+
+      return () => unsubscribe()
+   }, [])
+
+   const handleLogin = async () => {
+      try {
+         const result = await signInWithPopup(auth, provider)
+         const user = result.user
+         const token = await getIdToken(user)
+         setLoggedIn(true)
+         setAuthToken(token)
+      } catch (error) {
+         console.error('Error signing in with Google:', error)
+      }
+   }
+
+   const handleLogout = async () => {
+      try {
+         await signOut(auth)
+         setLoggedIn(false)
+         setAuthToken('')
+      } catch (error) {
+         console.error('Error signing out:', error)
+      }
+   }
+   //~Authentication Complete
 
    //~ FeedBack submit
    const handleFeedbackSubmit = async (e) => {
@@ -101,8 +148,38 @@ export default function TagArticleFetcher() {
       <>
          {/* <div className='min-h-screen bg-gradient-to-b from-gray-800 via-white-900 to-gray-800 text-white w-full'> */}
          <div className='bg-[linear-gradient(to_right,_rgb(58,28,113),_rgb(215,109,119),_rgb(255,175,123))] min-h-screen'>
-            <Navbar />
-
+            <Navbar
+               showModal={showModal}
+               setShowModal={setShowModal}
+               loggedIn={loggedIn}
+            />
+            {showModal && (
+               <Modal
+                  showModal={showModal}
+                  setShowModal={setShowModal}
+                  modalContainerClass='p-6 bg-emerald-500/40 border border-emerald-500 rounded-lg w-[60vw] sm:w-full sm:max-w-xl'
+                  header='User SignIn/SignUp'
+               >
+                  <div className='bg-gray-800/60 p-2'>
+                     {!loggedIn ? (
+                        <button onClick={handleLogin} className='text-white'>
+                           <FaUserCircle className='inline mr-2' />
+                           Sign In with Google
+                        </button>
+                     ) : (
+                        <div className='flex items-center gap-2'>
+                           <span className='text-white'>Welcome, User</span>
+                           <button
+                              onClick={handleLogout}
+                              className='text-white'
+                           >
+                              Log Out
+                           </button>
+                        </div>
+                     )}
+                  </div>
+               </Modal>
+            )}
             {/* //?? Loading  */}
             {loading ? (
                <div className='flex flex-col items-center justify-center h-screen'>

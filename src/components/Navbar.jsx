@@ -1,7 +1,11 @@
 import React from 'react'
 import { FaUserCircle } from 'react-icons/fa'
 
-export default function Navbar() {
+export default function Navbar({ showModal, setShowModal, loggedIn }) {
+   const handleShowModal = () => {
+      setShowModal(!showModal)
+   }
+
    return (
       <nav className='bg-black/30 text-white-100 p-2 shadow-lg w-full rounded-md '>
          <div className='container mx-auto flex justify-between items-center'>
@@ -14,9 +18,17 @@ export default function Navbar() {
             </div>
 
             {/* Right side: User Placeholder */}
-            <div className='flex items-center gap-3'>
-               <FaUserCircle className='text-white text-3xl' />
-               <span className='text-white'>Logged in User</span>
+            <div className='flex items-center'>
+               <button
+                  onClick={handleShowModal}
+                  className='flex flex-col items-center '
+               >
+                  <FaUserCircle className='text-white text-3xl' />
+
+                  <span className='text-white'>
+                     {loggedIn ? 'Logout' : 'Login'}
+                  </span>
+               </button>
             </div>
          </div>
       </nav>
