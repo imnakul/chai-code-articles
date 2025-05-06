@@ -23,6 +23,9 @@ import {
    onAuthStateChanged,
    getIdToken,
 } from 'firebase/auth'
+import { useDispatch } from 'react-redux'
+import { login } from '../store/userSlice.js'
+import { useSelector } from 'react-redux'
 
 export default function TagArticleFetcher() {
    const [tag1, setTag1] = useState('')
@@ -39,6 +42,8 @@ export default function TagArticleFetcher() {
    const [feedback, setFeedback] = useState('')
    const [loggedIn, setLoggedIn] = useState(false)
    const [authToken, setAuthToken] = useState('')
+
+   const userDetail = useSelector((state) => state.user.userInfo)
 
    //~ Fetching Articles
    const handleSubmit = async (e) => {
@@ -109,13 +114,23 @@ export default function TagArticleFetcher() {
       return () => unsubscribe()
    }, [])
 
+   const dispatch = useDispatch()
+
    const handleLogin = async () => {
       try {
          const result = await signInWithPopup(auth, provider)
          const user = result.user
          const token = await getIdToken(user)
-         setLoggedIn(true)
-         setAuthToken(token)
+         dispatch
+
+         const userInfo = {
+            name: user.displayName,
+            email: user.email,
+            photo: user.photoURL,
+            uid: user.uid,
+         }
+
+         dispatch(login({ userInfo, userToken: token }))
       } catch (error) {
          console.error('Error signing in with Google:', error)
       }
@@ -124,8 +139,7 @@ export default function TagArticleFetcher() {
    const handleLogout = async () => {
       try {
          await signOut(auth)
-         setLoggedIn(false)
-         setAuthToken('')
+         dispatch(logout())
       } catch (error) {
          console.error('Error signing out:', error)
       }
@@ -143,6 +157,8 @@ export default function TagArticleFetcher() {
             console.error('Error sending feedback', err)
          })
    }
+
+   useEffect
 
    return (
       <>
@@ -452,17 +468,31 @@ export default function TagArticleFetcher() {
                                           <input
                                              type='email'
                                              id='authorEmail'
-                                             className='w-full border border-gray-600 bg-gray-400/60 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-gold-500 text-gold-100 disabled:bg-gray-600 disabled:cursor-not-allowed'
-                                             placeholder='Author email'
+                                             className='w-full border border-gray-600 bg-gray-400/60 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-white text-white disabled:bg-gray-600 disabled:cursor-not-allowed'
+                                             placeholder='Enter Author email'
                                              value={
                                                 socials[article.author.username]
                                                    ?.email
                                                    ? socials[
                                                         article.author.username
                                                      ]?.email
-                                                   : 'No email found'
+                                                   : authorEmail
                                              }
-                                             disabled
+                                             onChange={(e) => {
+                                                if (
+                                                   !socials[
+                                                      article.author.username
+                                                   ]?.email
+                                                ) {
+                                                   return setAuthorEmail(
+                                                      e.target.value
+                                                   )
+                                                }
+                                             }}
+                                             disabled={
+                                                socials[article.author.username]
+                                                   ?.email
+                                             }
                                              required
                                           />
                                        </div>
@@ -477,12 +507,10 @@ export default function TagArticleFetcher() {
                                           <input
                                              type='email'
                                              id='senderEmail'
-                                             className='w-full border border-gray-600 bg-gray-400/60 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-gold-500 text-gold-100'
+                                             className='w-full border border-gray-600 bg-gray-400/60 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-white text-white disabled:bg-gray-600 disabled:cursor-not-allowed'
                                              placeholder='Your email'
-                                             value={userEmail}
-                                             onChange={(e) =>
-                                                setUserEmail(e.target.value)
-                                             }
+                                             value={userDetail.email}
+                                             disabled
                                              required
                                           />
                                        </div>
@@ -490,14 +518,14 @@ export default function TagArticleFetcher() {
                                        <div>
                                           <label
                                              className='block text-gray-300 font-medium mb-2'
-                                             htmlFor='senderEmail'
+                                             htmlFor='title'
                                           >
                                              Title
                                           </label>
                                           <input
                                              type='text'
                                              id='title'
-                                             className='w-full border border-gray-600 bg-gray-400/60 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-gold-500 text-gold-100'
+                                             className='w-full border border-gray-600 bg-gray-400/60 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-white text-white'
                                              placeholder='Article Feedback'
                                              value={`Feedback for: ${article.title} `}
                                              onChange={(e) =>
@@ -516,7 +544,7 @@ export default function TagArticleFetcher() {
                                           </label>
                                           <textarea
                                              id='feedback'
-                                             className='w-full border border-gray-600 bg-gray-400/60 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-gold-500 text-gold-100 resize-y'
+                                             className='w-full border border-gray-600 bg-gray-400/60 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-white text-white resize-y'
                                              placeholder='Write your feedback here...'
                                              rows='5'
                                              value={feedback}

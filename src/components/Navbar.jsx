@@ -1,10 +1,15 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { FaUserCircle } from 'react-icons/fa'
+import { useSelector } from 'react-redux'
 
-export default function Navbar({ showModal, setShowModal, loggedIn }) {
+export default function Navbar({ showModal, setShowModal }) {
    const handleShowModal = () => {
       setShowModal(!showModal)
    }
+
+   const userInfo = useSelector((state) => state.user.userInfo)
+   const loggedIn = useSelector((state) => state.user.loggedIn)
+   // console.log(userInfo)
 
    return (
       <nav className='bg-black/30 text-white-100 p-2 shadow-lg w-full rounded-md '>
@@ -23,10 +28,17 @@ export default function Navbar({ showModal, setShowModal, loggedIn }) {
                   onClick={handleShowModal}
                   className='flex flex-col items-center '
                >
-                  <FaUserCircle className='text-white text-3xl' />
+                  {loggedIn ? (
+                     <img
+                        src={`${userInfo.photo}`}
+                        className='w-10 h-10 rounded-full'
+                     />
+                  ) : (
+                     <FaUserCircle className='text-white text-3xl' />
+                  )}
 
                   <span className='text-white'>
-                     {loggedIn ? 'Logout' : 'Login'}
+                     {loggedIn ? `${userInfo.name}` : 'Login'}
                   </span>
                </button>
             </div>
