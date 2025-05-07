@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react'
 import { FaUserCircle } from 'react-icons/fa'
+
 import { useSelector } from 'react-redux'
 
-export default function Navbar({ showModal, setShowModal }) {
+export default function Navbar({ showModal, setShowModal, QR, setQR }) {
    const handleShowModal = () => {
       setShowModal(!showModal)
    }
@@ -12,34 +13,42 @@ export default function Navbar({ showModal, setShowModal }) {
    // console.log(userInfo)
 
    return (
-      <nav className='bg-black/50 text-white-100 p-2 shadow-lg w-full rounded-md '>
+      <nav className='bg-black/20 text-white-100 p-1 shadow-lg w-full rounded-md border-b border-cyan-500'>
          <div className='container mx-auto flex justify-between items-center'>
             {/* Left side: Logo and Title */}
-            <div className='flex items-center justify-center gap-4'>
-               <img src='/icon.svg' alt='Logo' className='size-14 ' />
-               <h1 className='text-4xl bg-gradient-to-b from-purple-400 via-pink-400 to-orange-400 bg-clip-text text-transparent font-bold '>
-                  Hashnode Article-Fetcher
+            <div className='flex items-center justify-center gap-2'>
+               <img
+                  src='/logo2.png'
+                  alt='Logo'
+                  className='size-15 filter-glow'
+               />
+               <h1 className='text-3xl bg-gradient-to-b from-cyan-400  to-cyan-600 bg-clip-text text-transparent font-bold filter-text-glow'>
+                  Hashnode Article-Finder
                </h1>
             </div>
 
-            {/* Right side: User Placeholder */}
-            <div className='flex items-center'>
-               <button
-                  onClick={handleShowModal}
-                  className='flex flex-col items-center '
-               >
+            {/* //?? Right side  */}
+            <div className='flex items-center gap-4 justify-center px-2 py-1'>
+               <button onClick={handleShowModal} className='flex items-center '>
                   {loggedIn ? (
                      <img
                         src={`${userInfo.photo}`}
-                        className='w-10 h-10 rounded-full'
+                        className='w-10 h-10 rounded-full cursor-pointer border-2 border-cyan-500'
                      />
                   ) : (
-                     <FaUserCircle className='text-white text-3xl' />
+                     <FaUserCircle className='text-white text-3xl cursor-pointer border-2 border-cyan-500' />
                   )}
 
-                  <span className='text-white'>
+                  {/* <span className='text-white ml-2'>
                      {loggedIn ? `${userInfo.name}` : 'Login'}
-                  </span>
+                  </span> */}
+               </button>
+
+               <button onClick={() => setQR(!QR)} className=''>
+                  <img
+                     src='https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExZnplZnJ5ZWZmc3ZlaWg2bGU5eGZ0N2JzMDVoczk3bnNqMjJ0MXd6NiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/TDQOtnWgsBx99cNoyH/giphy.gif'
+                     className='size-10 cursor-pointer border-2 border-cyan-500 rounded-full'
+                  />
                </button>
             </div>
          </div>

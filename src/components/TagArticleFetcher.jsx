@@ -11,6 +11,7 @@ import {
    FaGlobe,
    FaEnvelope,
    FaSpinner,
+   FaGoogle,
 } from 'react-icons/fa'
 import { MdArrowOutward } from 'react-icons/md'
 import Navbar from './Navbar'
@@ -27,6 +28,7 @@ import {
 import { useDispatch } from 'react-redux'
 import { login } from '../store/userSlice.js'
 import { useSelector } from 'react-redux'
+import { Footer } from './Footer.jsx'
 
 const sendEmail = async () => {
    const res = await fetch('/api/sendEmail', {
@@ -53,11 +55,12 @@ export default function TagArticleFetcher() {
    const [showModal, setShowModal] = useState(false)
 
    const [authorEmail, setAuthorEmail] = useState('')
-   const [userEmail, setUserEmail] = useState('imnakul44@gmail.com')
+   // const [userEmail, setUserEmail] = useState('imnakul44@gmail.com')
    const [title, setTitle] = useState('')
    const [feedback, setFeedback] = useState('')
    const [loggedIn, setLoggedIn] = useState(false)
-   const [authToken, setAuthToken] = useState('')
+   // const [authToken, setAuthToken] = useState('')
+   const [QR, setQR] = useState('')
 
    const userDetail = useSelector((state) => state.user.userInfo)
    const dispatch = useDispatch()
@@ -168,7 +171,7 @@ export default function TagArticleFetcher() {
    //~ FeedBack submit
    const handleFeedbackSubmit = async (e) => {
       e.preventDefault()
-      console.log('values', authorEmail, userEmail, title, feedback)
+      // console.log('values', authorEmail, userEmail, title, feedback)
       sendEmail()
       // await sendEmail(userEmail, authorEmail, title, feedback)
       //    .then((res) => {
@@ -181,28 +184,31 @@ export default function TagArticleFetcher() {
 
    return (
       <>
-         {/* <div className='min-h-screen bg-gradient-to-b from-gray-800 via-white-900 to-gray-800 text-white w-full'> */}
-         <div className='bg-[linear-gradient(to_right,_rgb(58,28,113),_rgb(215,109,119),_rgb(255,175,123))] min-h-screen w-full'>
+         {/* <div className='bg-[linear-gradient(to_right,_rgb(58,28,113),_rgb(215,109,119),_rgb(255,175,123))] min-h-screen w-full'> */}
+
+         <div class='bg-[linear-gradient(89.7deg,_rgb(0,0,0)_-10.7%,_rgb(53,92,125)_88.8%)] min-h-screen w-full'>
+            {/* <div className='bg-gray-800 min-h-screen'> */}
             <Navbar
                showModal={showModal}
                setShowModal={setShowModal}
-               loggedIn={loggedIn}
+               QR={QR}
+               setQR={setQR}
             />
             {showModal && (
                <Modal
                   showModal={showModal}
                   setShowModal={setShowModal}
-                  modalContainerClass='p-6 bg-emerald-500/40 border border-emerald-500 rounded-lg w-[60vw] sm:w-full sm:max-w-xl'
-                  header='User SignIn/SignUp'
+                  modalContainerClass=' border-2 border-cyan-500 sm:p-6'
+                  header='Login / Logout'
                   handleCloseModalOutsideClick={() => setShowModal(false)}
                >
-                  <div className='bg-gray-800/60 p-2'>
+                  <div className='p-2'>
                      {!loggedIn ? (
                         <button
                            onClick={handleLogin}
-                           className='bg-white/50  text-black font-bold py-3 px-5 rounded-md border border-emerald-500 mx-auto transition-all  hover:scale-95 duration-300 hover:bg-gray-600'
+                           className='bg-cyan-950  text-cyan-300 font-bold py-2 px-4 rounded-lg border border-cyan-500 mx-auto transition-all  hover:scale-95 duration-300 hover:bg-cyan-800 focus:bg-cyan-800'
                         >
-                           <FaUserCircle className='inline mr-2 ' />
+                           <FaGoogle className='inline mr-2 pb-0.5 ' />
                            Sign In with Google
                         </button>
                      ) : (
@@ -217,7 +223,7 @@ export default function TagArticleFetcher() {
                            </div>
                            <button
                               onClick={handleLogout}
-                              className='bg-white/50  text-black font-bold py-2 px-3 rounded-md border border-emerald-500 mx-auto transition-all  hover:scale-95 duration-300 hover:bg-gray-600'
+                              className='bg-cyan-950  text-cyan-300 font-bold py-2 px-4 rounded-lg border border-cyan-500 mx-auto transition-all  hover:scale-95 duration-300 hover:bg-cyan-800 focus:bg-cyan-800'
                            >
                               Log Out
                            </button>
@@ -226,10 +232,30 @@ export default function TagArticleFetcher() {
                   </div>
                </Modal>
             )}
+
+            {QR && (
+               <Modal
+                  showModal={QR}
+                  setShowModal={setQR}
+                  modalContainerClass={'w-[80vw] sm:w-full sm:max-w-sm sm:p-10'}
+                  closeModalOutsideClick={() => setQR(false)}
+                  header='Scan / Click to Give me a Boost'
+               >
+                  <div className='flex items-center justify-center w-full p-2'>
+                     <a
+                        href='https://www.buymeacoffee.com/imnakul'
+                        target='_blank'
+                     >
+                        <img src='/qr.png' className='size-72' />
+                     </a>
+                  </div>
+               </Modal>
+            )}
+
             {/* //?? Loading  */}
             {loading ? (
                <div className='flex flex-col items-center justify-center h-screen'>
-                  <FaSpinner className='text-white font-bold text-6xl animate-spin mb-4' />
+                  <FaSpinner className='text-cyan-400 font-bold text-6xl animate-spin mb-4' />
                   <p className='text-2xl font-semibold text-white'>
                      Fetching articles...
                   </p>
@@ -249,51 +275,58 @@ export default function TagArticleFetcher() {
                      />
                      <form
                         onSubmit={handleSubmit}
-                        className='bg-gray-800/60 p-4 md:p-6 lg:p-12 rounded-lg shadow-lg min-w-xs md:min-w-md lg:min-w-xl mx-auto my-12 border border-gradient'
+                        className='bg-black/20 p-4 md:p-6 lg:p-12 rounded-lg shadow-lg min-w-xs md:min-w-md lg:min-w-xl mx-auto my-12 border-2 border-cyan-500 '
                      >
                         <h2 className='text-4xl font-bold mb-8 text-center text-white'>
                            Find Articles by Tags
                         </h2>
 
                         <div className='mb-6'>
-                           <label className='block mb-2 text-white font-medium'>
-                              Tag 1 - small letters only , this is the title
-                              slug
+                           <label className=' mb-2 text-white font-medium flex items-center justify-between px-1'>
+                              Tag 1
+                              <span className='text-xs text-gray-400'>
+                                 its tag slug not tag | small letters only
+                              </span>
                            </label>
                            <input
                               type='text'
                               value={tag1}
                               onChange={(e) => setTag1(e.target.value)}
-                              className='w-full border border-gray-600 bg-gray-400/60 px-5 py-3 rounded focus:outline-none focus:ring-2 focus:ring-white-500 text-white'
-                              placeholder='e.g., chaicode'
+                              className='w-full border border-cyan-500 bg-gray-400/60 px-5 py-3 rounded focus:outline-none focus:ring-2 focus:ring-white-500 text-white'
+                              placeholder='e.g., chaicode, chai-code, qdrant, python ,genai, ai'
                               required
                            />
                         </div>
 
                         <div className='mb-6'>
-                           <label className='block mb-2 text-white font-medium'>
-                              Tag 2 - small letters only , this is the title
-                              slug
+                           <label className=' mb-2 text-white font-medium flex items-center justify-between px-1'>
+                              Tag 2
+                              <span className='text-xs text-gray-400'>
+                                 its tag slug not tag | small letters only
+                              </span>
                            </label>
                            <input
                               type='text'
                               value={tag2}
                               onChange={(e) => setTag2(e.target.value)}
-                              className='w-full border border-gray-600 bg-gray-400/60 px-5 py-3 rounded focus:outline-none focus:ring-2 focus:ring-white-500 text-white'
-                              placeholder='e.g., rag'
+                              className='w-full border border-cyan-500 bg-gray-400/60 px-5 py-3 rounded focus:outline-none focus:ring-2 focus:ring-white-500 text-white'
+                              placeholder='e.g., rag , advanced-rag, generative-ai , query-optimization'
                               required
                            />
                         </div>
 
                         <div className='mb-8'>
-                           <label className='block mb-2 text-white font-medium'>
-                              Pages to Fetch [ 1 Page = 50 Articles ]
+                           <label className='mb-2 text-white font-medium flex items-center justify-between px-1'>
+                              Pages
+                              <span className='text-xs text-gray-400'>
+                                 [ 1 Page = 50 Articles ]
+                              </span>
                            </label>
                            <input
                               type='number'
                               value={pages}
                               onChange={(e) => setPages(Number(e.target.value))}
-                              className='w-full border border-gray-600 bg-gray-400/60 px-5 py-3 rounded focus:outline-none focus:ring-2 focus:ring-white-500 text-white'
+                              className='w-full border border-cyan-500 bg-gray-400/60 px-5 py-3 rounded focus:outline-none focus:ring-2 focus:ring-white-500 text-white'
                               min={1}
                               required
                            />
@@ -301,9 +334,19 @@ export default function TagArticleFetcher() {
                         <div className='flex justify-center'>
                            <button
                               type='submit'
-                              className=' bg-white/50  text-black font-bold py-3 px-5 rounded-md border border-emerald-500 mx-auto transition-all  hover:scale-95 duration-300 hover:bg-gray-600'
+                              className=' bg-cyan-950  text-cyan-300 font-bold py-2 px-4 rounded-lg border border-cyan-500 mx-auto transition-all  hover:scale-95 duration-300 hover:bg-cyan-800 focus:bg-cyan-800 cursor-pointer'
                            >
                               Search
+                           </button>
+                           <button
+                              onClick={() => {
+                                 setTag1('')
+                                 setTag2('')
+                                 setPages(1)
+                              }}
+                              className='   text-cyan-300 font-bold py-2 px-4 rounded-lg border border-cyan-500 mx-auto transition-all  hover:scale-95 duration-300 hover:bg-cyan-800 focus:bg-cyan-800 cursor-pointer'
+                           >
+                              Reset
                            </button>
                         </div>
                      </form>
@@ -318,25 +361,28 @@ export default function TagArticleFetcher() {
                      <>
                         <div className='max-w-6xl mx-auto space-y-10'>
                            <div className='flex items-center justify-center w-full '>
-                              <span className='text-3xl font-semibold text-gray-200'>
+                              <span className='text-3xl font-semibold text-cyan-200'>
                                  {articles.length} Articles Found with both Tags
                               </span>
                            </div>
                            {articles.map((article, i) => (
                               <div
                                  key={i}
-                                 className='bg-gray-800/60 p-8 rounded-lg shadow-lg mt-4 flex flex-items-center justify-between w-full gap-4'
+                                 className='bg-gray-600/40 p-8 rounded-lg shadow-lg mt-4 flex flex-items-center justify-between w-full gap-4'
                               >
                                  {/* //?? ARticle Detail SEctioon  */}
                                  <div
-                                    className='w-2/3 p-6 bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-orange-500/30 border border-emerald-500 rounded-lg
+                                    className='w-2/3 p-4 bg-cyan-950 border border-cyan-500 rounded-lg flex flex-col
+                                    justify-around                          
                                  '
+                                    key={article.title}
                                  >
-                                    <div className='flex items-center mb-10'>
+                                    {/* //? Author details with Links */}
+                                    <div className='flex items-center '>
                                        <img
                                           src={article.author.profilePicture}
                                           alt={article.author.name}
-                                          className='w-16 h-16 rounded-full mr-6 object-cover border-2 border-emerald-500'
+                                          className='w-16 h-16 rounded-full mr-6 object-cover border-2 border-cyan-500'
                                        />
                                        <div>
                                           <p className='font-semibold text-xl text-white'>
@@ -360,7 +406,6 @@ export default function TagArticleFetcher() {
                                                    className=' hover:underline flex items-center gap-1'
                                                 >
                                                    <FaGithub /> GitHub{' '}
-                                                   <MdArrowOutward />
                                                 </a>
                                              )}
                                              {socials[article.author.username]
@@ -376,7 +421,6 @@ export default function TagArticleFetcher() {
                                                    className=' hover:underline flex items-center gap-1'
                                                 >
                                                    <FaTwitter /> Twitter{' '}
-                                                   <MdArrowOutward />
                                                 </a>
                                              )}
                                              {socials[article.author.username]
@@ -392,20 +436,9 @@ export default function TagArticleFetcher() {
                                                    className=' hover:underline flex items-center gap-1'
                                                 >
                                                    <FaInstagram /> Instagram{' '}
-                                                   <MdArrowOutward />
                                                 </a>
                                              )}
-                                             {/* {socials[article.author.username]
-                                                ?.email && (
-                                                <p className='text-sm  flex items-center gap-1'>
-                                                   <FaEnvelope />{' '}
-                                                   {
-                                                      socials[
-                                                         article.author.username
-                                                      ].email
-                                                   }
-                                                </p>
-                                             )} */}
+
                                              {socials[article.author.username]
                                                 ?.website && (
                                                 <a
@@ -419,62 +452,65 @@ export default function TagArticleFetcher() {
                                                    className=' hover:underline flex items-center gap-1'
                                                 >
                                                    <FaGlobe /> Website{' '}
-                                                   <MdArrowOutward />
                                                 </a>
                                              )}
                                           </div>
                                        </div>
                                     </div>
-
-                                    <a
-                                       href={article.url}
-                                       target='_blank'
-                                       rel='noopener noreferrer'
-                                       className='text-3xl font-bold text-white hover:underline '
-                                    >
-                                       {article.title}
-                                    </a>
-
-                                    <div className='text-sm text-white mt-6 space-y-4'>
-                                       <p className='text-lg text-gray-500'>
+                                    {/* //? Article Title with Link */}
+                                    <div className=''>
+                                       <a
+                                          href={article.url}
+                                          target='_blank'
+                                          rel='noopener noreferrer'
+                                          className='text-3xl font-bold text-cyan-300 hover:underline filter-text-glow-hover'
+                                       >
+                                          {article.title}
+                                       </a>
+                                    </div>
+                                    {/* //? Details of article  */}
+                                    <div className='text-base text-white space-y-2 '>
+                                       <p className=' text-gray-400'>
                                           <strong>Slug:</strong>{' '}
-                                          <span className='text-white'>
+                                          <span className='text-white text-lg'>
                                              {article.slug}
                                           </span>
                                        </p>
-                                       <p className='text-lg text-gray-500'>
+                                       <p className=' text-gray-400'>
                                           <strong>Published:</strong>{' '}
-                                          <span className='text-white'>
+                                          <span className='text-white text-lg'>
                                              {new Date(
                                                 article.publishedAt
                                              ).toLocaleString()}
                                           </span>
                                        </p>
-                                       <p className='text-lg text-gray-500'>
+                                       <p className=' text-gray-400'>
                                           <strong>Updated:</strong>{' '}
-                                          <span className='text-white'>
+                                          <span className='text-white text-lg'>
                                              {new Date(
                                                 article.updatedAt
                                              ).toLocaleString()}
                                           </span>
                                        </p>
-                                       <p className='text-lg text-gray-500'>
+                                       <p className=' text-gray-400'>
                                           <strong>Views:</strong>{' '}
-                                          <span className='text-white'>
+                                          <span className='text-white text-lg'>
                                              {article.views ?? 'N/A'}
                                           </span>{' '}
-                                          | <strong>Comments:</strong>{' '}
-                                          <span className='text-white'>
+                                       </p>
+                                       <p className='text-base text-gray-400'>
+                                          <strong>Comments:</strong>{' '}
+                                          <span className='text-lg text-white'>
                                              {article.responseCount}
                                           </span>
                                        </p>
                                     </div>
-
-                                    <div className='mt-4 flex flex-wrap gap-3'>
+                                    {/* //? Tag Slugs */}
+                                    <div className=' flex flex-wrap gap-3 '>
                                        {article.tags?.map((tag) => (
                                           <span
                                              key={tag.slug}
-                                             className='bg-emerald-500 text-black text-xs px-4 py-2 rounded-full'
+                                             className='bg-cyan-500 text-black text-xs px-4 py-2 rounded-full'
                                           >
                                              #{tag.slug}
                                           </span>
@@ -483,11 +519,13 @@ export default function TagArticleFetcher() {
                                  </div>
 
                                  {/* //?? Feedback section  */}
-                                 <div className='bg-emerald-500/20 p-4 rounded-lg shadow-lg border border-emerald-500 w-1/3'>
+                                 <div className='bg-cyan-950 p-4 rounded-lg shadow-lg border border-cyan-500 w-1/3'>
                                     {/* <div className='bg-gray-800 p-8 rounded-lg shadow-lg mt-10'> */}
-                                    <h3 className='text-2xl font-bold text-gold-400 mb-6 mx-auto'>
-                                       Feedback Section
-                                    </h3>
+                                    <div className='flex items-center w-full mx-auto'>
+                                       <h3 className='text-2xl font-bold text-cyan-300 mb-3  mx-auto'>
+                                          Feedback Section
+                                       </h3>
+                                    </div>
                                     <form
                                        className='space-y-2'
                                        onSubmit={handleFeedbackSubmit}
@@ -591,7 +629,7 @@ export default function TagArticleFetcher() {
 
                                        <button
                                           type='submit'
-                                          className='w-full bg-gold-600 hover:bg-gold-700  bg-white/50 hover:bg-white-700 text-black font-bold py-3 px-5 rounded-md border border-emerald-500 mx-auto transition-all  hover:scale-95 duration-300 '
+                                          className='bg-cyan-950  text-cyan-300 font-bold py-2 px-4 rounded-lg border border-cyan-500 transition-all  hover:scale-95 duration-300 hover:bg-cyan-800 focus:bg-cyan-800 cursor-pointer mx-auto w-full'
                                        >
                                           Submit Feedback
                                        </button>
@@ -605,6 +643,7 @@ export default function TagArticleFetcher() {
                   )}
                </>
             )}
+            <Footer />
          </div>
       </>
    )
