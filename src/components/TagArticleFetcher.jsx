@@ -12,6 +12,7 @@ import {
    FaEnvelope,
    FaSpinner,
 } from 'react-icons/fa'
+import { MdArrowOutward } from 'react-icons/md'
 import Navbar from './Navbar'
 // import { sendEmail } from '../utils/sendEmail.js'
 import Modal from './Modal'
@@ -147,6 +148,8 @@ export default function TagArticleFetcher() {
          dispatch(login({ userInfo, userToken: token }))
       } catch (error) {
          console.error('Error signing in with Google:', error)
+      } finally {
+         setShowModal(false)
       }
    }
 
@@ -156,6 +159,8 @@ export default function TagArticleFetcher() {
          dispatch(logout())
       } catch (error) {
          console.error('Error signing out:', error)
+      } finally {
+         setShowModal(false)
       }
    }
    //~Authentication Complete
@@ -177,7 +182,7 @@ export default function TagArticleFetcher() {
    return (
       <>
          {/* <div className='min-h-screen bg-gradient-to-b from-gray-800 via-white-900 to-gray-800 text-white w-full'> */}
-         <div className='bg-[linear-gradient(to_right,_rgb(58,28,113),_rgb(215,109,119),_rgb(255,175,123))] min-h-screen'>
+         <div className='bg-[linear-gradient(to_right,_rgb(58,28,113),_rgb(215,109,119),_rgb(255,175,123))] min-h-screen w-full'>
             <Navbar
                showModal={showModal}
                setShowModal={setShowModal}
@@ -189,19 +194,30 @@ export default function TagArticleFetcher() {
                   setShowModal={setShowModal}
                   modalContainerClass='p-6 bg-emerald-500/40 border border-emerald-500 rounded-lg w-[60vw] sm:w-full sm:max-w-xl'
                   header='User SignIn/SignUp'
+                  handleCloseModalOutsideClick={() => setShowModal(false)}
                >
                   <div className='bg-gray-800/60 p-2'>
                      {!loggedIn ? (
-                        <button onClick={handleLogin} className='text-white'>
-                           <FaUserCircle className='inline mr-2' />
+                        <button
+                           onClick={handleLogin}
+                           className='bg-white/50  text-black font-bold py-3 px-5 rounded-md border border-emerald-500 mx-auto transition-all  hover:scale-95 duration-300 hover:bg-gray-600'
+                        >
+                           <FaUserCircle className='inline mr-2 ' />
                            Sign In with Google
                         </button>
                      ) : (
-                        <div className='flex items-center gap-2'>
-                           <span className='text-white'>Welcome, User</span>
+                        <div className='flex flex-col items-center justify-between gap-2 w-full p-4 space-y-4'>
+                           <div className='flex items-center gap-2'>
+                              <span className='text-white text-base'>
+                                 Logged In User:
+                              </span>
+                              <span className='font-semibold text-white'>
+                                 {userDetail.name}
+                              </span>
+                           </div>
                            <button
                               onClick={handleLogout}
-                              className='text-white'
+                              className='bg-white/50  text-black font-bold py-2 px-3 rounded-md border border-emerald-500 mx-auto transition-all  hover:scale-95 duration-300 hover:bg-gray-600'
                            >
                               Log Out
                            </button>
@@ -213,7 +229,7 @@ export default function TagArticleFetcher() {
             {/* //?? Loading  */}
             {loading ? (
                <div className='flex flex-col items-center justify-center h-screen'>
-                  <FaSpinner className='text-white text-6xl animate-spin mb-4' />
+                  <FaSpinner className='text-white font-bold text-6xl animate-spin mb-4' />
                   <p className='text-2xl font-semibold text-white'>
                      Fetching articles...
                   </p>
@@ -225,15 +241,15 @@ export default function TagArticleFetcher() {
             ) : (
                <>
                   {/* //?? FORM  */}
-                  <div className='max-w-5xl  flex items-center justify-around mx-auto gap-20'>
+                  <div className=' max-w-sm md:max-w-3xl lg:max-w-5xl flex flex-col lg:flex lg:flex-row items-center justify-around mx-auto gap-2 lg:gap-20'>
                      <img
-                        src='/chaicode.jpg'
+                        src='/haf.png'
                         alt='Logo'
-                        className='animate-pulse hover:scale-105 transition-all duration-800 ease-in-out'
+                        className='max-w-xs md:max-w-sm lg:max-w-md hover:scale-105 transition-all duration-800 ease-in-out'
                      />
                      <form
                         onSubmit={handleSubmit}
-                        className='bg-gray-800/60 p-12 rounded-lg shadow-lg min-w-xl mx-auto my-12'
+                        className='bg-gray-800/60 p-4 md:p-6 lg:p-12 rounded-lg shadow-lg min-w-xs md:min-w-md lg:min-w-xl mx-auto my-12 border border-gradient'
                      >
                         <h2 className='text-4xl font-bold mb-8 text-center text-white'>
                            Find Articles by Tags
@@ -313,7 +329,7 @@ export default function TagArticleFetcher() {
                               >
                                  {/* //?? ARticle Detail SEctioon  */}
                                  <div
-                                    className='w-2/3 p-6 bg-emerald-500/20 border border-emerald-500 rounded-lg
+                                    className='w-2/3 p-6 bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-orange-500/30 border border-emerald-500 rounded-lg
                                  '
                                  >
                                     <div className='flex items-center mb-10'>
@@ -343,7 +359,8 @@ export default function TagArticleFetcher() {
                                                    rel='noreferrer'
                                                    className=' hover:underline flex items-center gap-1'
                                                 >
-                                                   <FaGithub /> GitHub
+                                                   <FaGithub /> GitHub{' '}
+                                                   <MdArrowOutward />
                                                 </a>
                                              )}
                                              {socials[article.author.username]
@@ -358,7 +375,8 @@ export default function TagArticleFetcher() {
                                                    rel='noreferrer'
                                                    className=' hover:underline flex items-center gap-1'
                                                 >
-                                                   <FaTwitter /> Twitter
+                                                   <FaTwitter /> Twitter{' '}
+                                                   <MdArrowOutward />
                                                 </a>
                                              )}
                                              {socials[article.author.username]
@@ -373,10 +391,11 @@ export default function TagArticleFetcher() {
                                                    rel='noreferrer'
                                                    className=' hover:underline flex items-center gap-1'
                                                 >
-                                                   <FaInstagram /> Instagram
+                                                   <FaInstagram /> Instagram{' '}
+                                                   <MdArrowOutward />
                                                 </a>
                                              )}
-                                             {socials[article.author.username]
+                                             {/* {socials[article.author.username]
                                                 ?.email && (
                                                 <p className='text-sm  flex items-center gap-1'>
                                                    <FaEnvelope />{' '}
@@ -386,7 +405,7 @@ export default function TagArticleFetcher() {
                                                       ].email
                                                    }
                                                 </p>
-                                             )}
+                                             )} */}
                                              {socials[article.author.username]
                                                 ?.website && (
                                                 <a
@@ -399,7 +418,8 @@ export default function TagArticleFetcher() {
                                                    rel='noreferrer'
                                                    className=' hover:underline flex items-center gap-1'
                                                 >
-                                                   <FaGlobe /> Website
+                                                   <FaGlobe /> Website{' '}
+                                                   <MdArrowOutward />
                                                 </a>
                                              )}
                                           </div>
