@@ -36,7 +36,7 @@ export default function Navbar({ showModal, setShowModal, QR, setQR }) {
                         className='w-10 h-10 rounded-full cursor-pointer border-2 border-cyan-500'
                      />
                   ) : (
-                     <FaUserCircle className='text-white text-3xl cursor-pointer border-2 border-cyan-500' />
+                     <FaUserCircle className='text-cyan-600 size-10 cursor-pointer border-2 border-cyan-500 rounded-full' />
                   )}
 
                   {/* <span className='text-white ml-2'>

@@ -23,6 +23,10 @@ export async function getGitHubEmail(githubUrl) {
       )
       const repos = await reposResponse.json()
 
+      if (repos.message && repos.message.includes('rate limit')) {
+         throw new Error('⚠️ GitHub rate limit exceeded. Use a token.')
+      }
+
       if (!repos || repos.length === 0) {
          throw new Error('No repositories found for this user.')
       }

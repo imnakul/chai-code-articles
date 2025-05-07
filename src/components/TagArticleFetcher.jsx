@@ -15,7 +15,6 @@ import {
 } from 'react-icons/fa'
 import { MdArrowOutward } from 'react-icons/md'
 import Navbar from './Navbar'
-// import { sendEmail } from '../utils/sendEmail.js'
 import Modal from './Modal'
 import { FaUserCircle } from 'react-icons/fa'
 import { auth, provider } from '../utils/firebaseConfig.js'
@@ -30,14 +29,15 @@ import { login } from '../store/userSlice.js'
 import { useSelector } from 'react-redux'
 import { Footer } from './Footer.jsx'
 
-const sendEmail = async () => {
+const sendEmail = async (authorEmail, title, feedback) => {
+   console.log(authorEmail, title, feedback)
    const res = await fetch('/api/sendEmail', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-         to: 'imnakul44@gmail.com',
-         subject: 'Hello!',
-         message: 'This is a test email.',
+         to: { authorEmail },
+         subject: { title },
+         message: { feedback },
       }),
    })
 
@@ -55,7 +55,7 @@ export default function TagArticleFetcher() {
    const [showModal, setShowModal] = useState(false)
 
    const [authorEmail, setAuthorEmail] = useState('')
-   // const [userEmail, setUserEmail] = useState('imnakul44@gmail.com')
+   const [userEmail, setUserEmail] = useState('')
    const [title, setTitle] = useState('')
    const [feedback, setFeedback] = useState('')
    const [loggedIn, setLoggedIn] = useState(false)
@@ -63,6 +63,12 @@ export default function TagArticleFetcher() {
    const [QR, setQR] = useState('')
 
    const userDetail = useSelector((state) => state.user.userInfo)
+   useEffect(() => {
+      if (userEmail) {
+         setUserEmail(userDetail.email)
+      }
+   }, [userDetail])
+
    const dispatch = useDispatch()
 
    //~ Fetching Articles
@@ -171,15 +177,8 @@ export default function TagArticleFetcher() {
    //~ FeedBack submit
    const handleFeedbackSubmit = async (e) => {
       e.preventDefault()
-      // console.log('values', authorEmail, userEmail, title, feedback)
-      sendEmail()
-      // await sendEmail(userEmail, authorEmail, title, feedback)
-      //    .then((res) => {
-      //       console.log('Feedback sent successfully', res)
-      //    })
-      //    .catch((err) => {
-      //       console.error('Error sending feedback', err)
-      //    })
+
+      await sendEmail(authorEmail, title, feedback)
    }
 
    return (
@@ -187,13 +186,13 @@ export default function TagArticleFetcher() {
          {/* <div className='bg-[linear-gradient(to_right,_rgb(58,28,113),_rgb(215,109,119),_rgb(255,175,123))] min-h-screen w-full'> */}
 
          <div class='bg-[linear-gradient(89.7deg,_rgb(0,0,0)_-10.7%,_rgb(53,92,125)_88.8%)] min-h-screen w-full'>
-            {/* <div className='bg-gray-800 min-h-screen'> */}
             <Navbar
                showModal={showModal}
                setShowModal={setShowModal}
                QR={QR}
                setQR={setQR}
             />
+            {/* //~ SIgn in Modal */}
             {showModal && (
                <Modal
                   showModal={showModal}
@@ -233,6 +232,7 @@ export default function TagArticleFetcher() {
                </Modal>
             )}
 
+            {/* //~ QR Modal */}
             {QR && (
                <Modal
                   showModal={QR}
@@ -344,7 +344,8 @@ export default function TagArticleFetcher() {
                                  setTag2('')
                                  setPages(1)
                               }}
-                              className='   text-cyan-300 font-bold py-2 px-4 rounded-lg border border-cyan-500 mx-auto transition-all  hover:scale-95 duration-300 hover:bg-cyan-800 focus:bg-cyan-800 cursor-pointer'
+                              className='bg-red-950 text-red-300 font-bold py-2 px-4 rounded-lg border border-red-500 mx-auto transition-all  hover:scale-95 duration-300 hover:bg-red-800 focus:bg-red-800 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+                              disabled={tag1 === '' || tag2 === ''}
                            >
                               Reset
                            </button>
@@ -362,9 +363,11 @@ export default function TagArticleFetcher() {
                         <div className='max-w-6xl mx-auto space-y-10'>
                            <div className='flex items-center justify-center w-full '>
                               <span className='text-3xl font-semibold text-cyan-200'>
-                                 {articles.length} Articles Found with both Tags
+                                 Found {articles.length} Articles with common
+                                 Tags
                               </span>
                            </div>
+                           {/* //~ Articles  */}
                            {articles.map((article, i) => (
                               <div
                                  key={i}
@@ -373,7 +376,7 @@ export default function TagArticleFetcher() {
                                  {/* //?? ARticle Detail SEctioon  */}
                                  <div
                                     className='w-2/3 p-4 bg-cyan-950 border border-cyan-500 rounded-lg flex flex-col
-                                    justify-around                          
+                                    justify-around space-y-6                         
                                  '
                                     key={article.title}
                                  >
@@ -469,16 +472,16 @@ export default function TagArticleFetcher() {
                                        </a>
                                     </div>
                                     {/* //? Details of article  */}
-                                    <div className='text-base text-white space-y-2 '>
+                                    <div className='text-sm text-white space-y-2 '>
                                        <p className=' text-gray-400'>
                                           <strong>Slug:</strong>{' '}
-                                          <span className='text-white text-lg'>
+                                          <span className='text-white text-base'>
                                              {article.slug}
                                           </span>
                                        </p>
                                        <p className=' text-gray-400'>
                                           <strong>Published:</strong>{' '}
-                                          <span className='text-white text-lg'>
+                                          <span className='text-white text-base'>
                                              {new Date(
                                                 article.publishedAt
                                              ).toLocaleString()}
@@ -486,7 +489,7 @@ export default function TagArticleFetcher() {
                                        </p>
                                        <p className=' text-gray-400'>
                                           <strong>Updated:</strong>{' '}
-                                          <span className='text-white text-lg'>
+                                          <span className='text-white text-base'>
                                              {new Date(
                                                 article.updatedAt
                                              ).toLocaleString()}
@@ -494,12 +497,10 @@ export default function TagArticleFetcher() {
                                        </p>
                                        <p className=' text-gray-400'>
                                           <strong>Views:</strong>{' '}
-                                          <span className='text-white text-lg'>
+                                          <span className='text-white text-base'>
                                              {article.views ?? 'N/A'}
                                           </span>{' '}
-                                       </p>
-                                       <p className='text-base text-gray-400'>
-                                          <strong>Comments:</strong>{' '}
+                                          | <strong>Comments:</strong>{' '}
                                           <span className='text-lg text-white'>
                                              {article.responseCount}
                                           </span>
@@ -521,7 +522,10 @@ export default function TagArticleFetcher() {
                                  {/* //?? Feedback section  */}
                                  <div className='bg-cyan-950 p-4 rounded-lg shadow-lg border border-cyan-500 w-1/3'>
                                     {/* <div className='bg-gray-800 p-8 rounded-lg shadow-lg mt-10'> */}
-                                    <div className='flex items-center w-full mx-auto'>
+                                    <div
+                                       className='flex items-center w-full mx-auto'
+                                       key={article.title}
+                                    >
                                        <h3 className='text-2xl font-bold text-cyan-300 mb-3  mx-auto'>
                                           Feedback Section
                                        </h3>
@@ -569,7 +573,7 @@ export default function TagArticleFetcher() {
                                           />
                                        </div>
 
-                                       <div>
+                                       {/* <div>
                                           <label
                                              className='block text-gray-300 font-medium mb-2'
                                              htmlFor='senderEmail'
@@ -581,11 +585,11 @@ export default function TagArticleFetcher() {
                                              id='senderEmail'
                                              className='w-full border border-gray-600 bg-gray-400/60 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-white text-white disabled:bg-gray-600 disabled:cursor-not-allowed'
                                              placeholder='Your email'
-                                             value={userDetail.email}
+                                             value={userEmail}
                                              disabled
                                              required
                                           />
-                                       </div>
+                                       </div> */}
 
                                        <div>
                                           <label
@@ -597,13 +601,11 @@ export default function TagArticleFetcher() {
                                           <input
                                              type='text'
                                              id='title'
-                                             className='w-full border border-gray-600 bg-gray-400/60 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-white text-white'
+                                             className='w-full border border-gray-600 bg-gray-400/60 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-white text-white disabled:bg-gray-600 disabled:cursor-not-allowed'
                                              placeholder='Article Feedback'
-                                             value={`Feedback for: ${article.title} `}
-                                             onChange={(e) =>
-                                                setTitle(e.target.value)
-                                             }
+                                             value={`Feedback for: ${article.title}`}
                                              required
+                                             disabled
                                           />
                                        </div>
 
