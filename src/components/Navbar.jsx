@@ -16,7 +16,7 @@ export default function Navbar({ showModal, setShowModal }) {
          <div className='container mx-auto flex justify-between items-center'>
             {/* Left side: Logo and Title */}
             <div className='flex items-center justify-center gap-2'>
-               <img src='/public/icon.svg' alt='Logo' className='size-12 ' />
+               <img src='/icon.svg' alt='Logo' className='size-12 ' />
                <h1 className='text-3xl text-emerald-500 font-bold'>
                   Hashnode: Article Fetcher
                </h1>

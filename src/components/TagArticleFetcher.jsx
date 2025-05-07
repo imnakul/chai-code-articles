@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import {
    fetchArticlesWithAllTags,
    fetchUserSocialLinks,
-} from '../functions/fetcharticles'
-import { getGitHubEmail } from '../functions/fetchemail'
+} from '../utils/fetcharticles.js'
+import { getGitHubEmail } from '../utils/fetchemail.js'
 import {
    FaGithub,
    FaTwitter,
@@ -13,10 +13,10 @@ import {
    FaSpinner,
 } from 'react-icons/fa'
 import Navbar from './Navbar'
-import { sendEmail } from '../functions/sendEmail'
+// import { sendEmail } from '../utils/sendEmail.js'
 import Modal from './Modal'
 import { FaUserCircle } from 'react-icons/fa'
-import { auth, provider } from '../functions/firebaseConfig.js'
+import { auth, provider } from '../utils/firebaseConfig.js'
 import {
    signInWithPopup,
    signOut,
@@ -26,6 +26,21 @@ import {
 import { useDispatch } from 'react-redux'
 import { login } from '../store/userSlice.js'
 import { useSelector } from 'react-redux'
+
+const sendEmail = async () => {
+   const res = await fetch('/api/sendEmail', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+         to: 'imnakul44@gmail.com',
+         subject: 'Hello!',
+         message: 'This is a test email.',
+      }),
+   })
+
+   const data = await res.json()
+   console.log(data)
+}
 
 export default function TagArticleFetcher() {
    const [tag1, setTag1] = useState('')
@@ -44,6 +59,7 @@ export default function TagArticleFetcher() {
    const [authToken, setAuthToken] = useState('')
 
    const userDetail = useSelector((state) => state.user.userInfo)
+   const dispatch = useDispatch()
 
    //~ Fetching Articles
    const handleSubmit = async (e) => {
@@ -114,8 +130,6 @@ export default function TagArticleFetcher() {
       return () => unsubscribe()
    }, [])
 
-   const dispatch = useDispatch()
-
    const handleLogin = async () => {
       try {
          const result = await signInWithPopup(auth, provider)
@@ -149,16 +163,16 @@ export default function TagArticleFetcher() {
    //~ FeedBack submit
    const handleFeedbackSubmit = async (e) => {
       e.preventDefault()
-      await sendEmail(userEmail, authorEmail, title, feedback)
-         .then((res) => {
-            console.log('Feedback sent successfully', res)
-         })
-         .catch((err) => {
-            console.error('Error sending feedback', err)
-         })
+      console.log('values', authorEmail, userEmail, title, feedback)
+      sendEmail()
+      // await sendEmail(userEmail, authorEmail, title, feedback)
+      //    .then((res) => {
+      //       console.log('Feedback sent successfully', res)
+      //    })
+      //    .catch((err) => {
+      //       console.error('Error sending feedback', err)
+      //    })
    }
-
-   useEffect
 
    return (
       <>
