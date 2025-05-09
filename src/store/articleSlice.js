@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
    articles: [],
+   socials: {}
 }
 
 const articleSlice = createSlice({
@@ -11,11 +12,15 @@ const articleSlice = createSlice({
       setArticles: (state, action) => {
          state.articles = action.payload
       },
+      setSocials: (state, action) => {
+         state.socials = action.payload
+      },
       clearArticles: (state) => {
          state.articles = []
+         state.socials = {}
       },
    },
 })
 
-export const { setArticles, clearArticles } = articleSlice.actions
+export const { setArticles, setSocials, clearArticles } = articleSlice.actions
 export default articleSlice.reducer

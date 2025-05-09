@@ -10,8 +10,11 @@ export default function Navbar({ showModal, setShowModal, QR, setQR }) {
 
    const userInfo = useSelector((state) => state.user.userInfo)
    const loggedIn = useSelector((state) => state.user.loggedIn)
+   let photoUrl
    // console.log(userInfo)
-   const photoUrl = userInfo.photo
+   if (loggedIn) {
+      photoUrl = userInfo.photo
+   }
 
    return (
       <nav className='bg-black/20 text-white-100 p-1 shadow-lg w-full rounded-md border-b border-cyan-500'>

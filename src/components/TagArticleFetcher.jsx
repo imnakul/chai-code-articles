@@ -28,7 +28,11 @@ import { useDispatch } from 'react-redux'
 import { login, logout } from '../store/userSlice.js'
 import { useSelector } from 'react-redux'
 import { Footer } from './Footer.jsx'
-import { setArticles, clearArticles } from '../store/articleSlice.js'
+import {
+   setArticles,
+   clearArticles,
+   setSocials,
+} from '../store/articleSlice.js'
 
 const sendEmail = async (authorEmail, title, feedback) => {
    console.log(authorEmail, title, feedback)
@@ -51,7 +55,6 @@ export default function TagArticleFetcher() {
    const [tag2, setTag2] = useState('')
    const [pages, setPages] = useState(5)
    const [loading, setLoading] = useState(false)
-   const [socials, setSocials] = useState({})
    const [showModal, setShowModal] = useState(false)
    const [progressMessages, setProgressMessages] = useState([])
 
@@ -63,8 +66,13 @@ export default function TagArticleFetcher() {
    const [authToken, setAuthToken] = useState('')
    const [QR, setQR] = useState('')
 
+   const [searchTerm, setSearchTerm] = useState('')
+   const [sortBy, setSortBy] = useState('')
+   const [sortOrder, setSortOrder] = useState('desc')
+   const [filterBy, setFilterBy] = useState('')
    const userDetail = useSelector((state) => state.user.userInfo)
    const articles = useSelector((state) => state.article.articles)
+   const socials = useSelector((state) => state.article.socials)
    const dispatch = useDispatch()
 
    useEffect(() => {
@@ -124,8 +132,7 @@ export default function TagArticleFetcher() {
                socialData[username] = { email: null }
             }
          }
-
-         setSocials(socialData)
+         dispatch(setSocials(socialData))
          console.log('Social data', socialData)
       } catch (err) {
          console.error('Error fetching articles:', err)
@@ -134,6 +141,76 @@ export default function TagArticleFetcher() {
 
       setLoading(false)
    }
+
+   //~ Function to filter and sort articles
+   const getFilteredAndSortedArticles = () => {
+      let result = [...articles]
+
+      // Apply search filter
+      if (searchTerm) {
+         const searchLower = searchTerm.toLowerCase()
+         result = result.filter(
+            (article) =>
+               article.title.toLowerCase().includes(searchLower) ||
+               article.brief?.toLowerCase().includes(searchLower) ||
+               article.tags.some((tag) =>
+                  tag.slug.toLowerCase().includes(searchLower)
+               )
+         )
+      }
+
+      // Apply filters
+      if (filterBy) {
+         switch (filterBy) {
+            case 'lastWeek':
+               const weekAgo = new Date()
+               weekAgo.setDate(weekAgo.getDate() - 7)
+               result = result.filter(
+                  (article) => new Date(article.publishedAt) >= weekAgo
+               )
+               break
+            case 'lastMonth':
+               const monthAgo = new Date()
+               monthAgo.setDate(monthAgo.getDate() - 30)
+               result = result.filter(
+                  (article) => new Date(article.publishedAt) >= monthAgo
+               )
+               break
+            case 'highViews':
+               result = result.filter((article) => article.views >= 1000)
+               break
+            case 'hasGithub':
+               result = result.filter(
+                  (article) => socials[article.author.username]?.github
+               )
+               break
+         }
+      }
+
+      // Apply sorting
+      if (sortBy) {
+         result.sort((a, b) => {
+            let aValue = a[sortBy]
+            let bValue = b[sortBy]
+
+            // Handle date fields
+            if (['publishedAt', 'updatedAt'].includes(sortBy)) {
+               aValue = new Date(aValue).getTime()
+               bValue = new Date(bValue).getTime()
+            }
+
+            if (sortOrder === 'asc') {
+               return aValue > bValue ? 1 : -1
+            }
+            return aValue < bValue ? 1 : -1
+         })
+      }
+
+      return result
+   }
+
+   // Get filtered articles
+   const filteredArticles = getFilteredAndSortedArticles()
 
    //~ Authentication - Login + Logout
    useEffect(() => {
@@ -381,14 +458,102 @@ export default function TagArticleFetcher() {
                   {articles.length > 0 && (
                      <>
                         <div className='max-w-6xl mx-auto space-y-10'>
-                           <div className='flex items-center justify-center w-full '>
+                           <div className='flex items-center justify-center w-full'>
                               <span className='text-3xl font-semibold text-cyan-200'>
                                  Found {articles.length} Articles with common
                                  Tags
                               </span>
                            </div>
-                           {/* //~ Articles  */}
-                           {articles.map((article, i) => (
+
+                           {/* Control Panel */}
+                           <div className='bg-gray-800/30 p-6 rounded-lg border border-cyan-500'>
+                              <div className='flex flex-col md:flex-row gap-4 items-center justify-between'>
+                                 {/* Search */}
+                                 <div className='w-full md:w-1/3'>
+                                    <input
+                                       type='text'
+                                       placeholder='Search articles...'
+                                       value={searchTerm}
+                                       onChange={(e) =>
+                                          setSearchTerm(e.target.value)
+                                       }
+                                       className='w-full px-4 py-2 bg-gray-700/50 text-white rounded-lg border border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500'
+                                    />
+                                 </div>
+
+                                 {/* Sort */}
+                                 <div className='flex flex-wrap items-center gap-4'>
+                                    <select
+                                       value={sortBy}
+                                       onChange={(e) =>
+                                          setSortBy(e.target.value)
+                                       }
+                                       className='px-4 py-2 bg-gray-700/50 text-white rounded-lg border border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500'
+                                    >
+                                       <option value=''>Sort by...</option>
+                                       <option value='views'>Views</option>
+                                       <option value='publishedAt'>
+                                          Published Date
+                                       </option>
+                                       <option value='updatedAt'>
+                                          Updated Date
+                                       </option>
+                                       <option value='responseCount'>
+                                          Comments
+                                       </option>
+                                    </select>
+
+                                    {sortBy && (
+                                       <select
+                                          value={sortOrder}
+                                          onChange={(e) =>
+                                             setSortOrder(e.target.value)
+                                          }
+                                          className='px-4 py-2 bg-gray-700/50 text-white rounded-lg border border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500'
+                                       >
+                                          <option value='desc'>
+                                             Descending
+                                          </option>
+                                          <option value='asc'>Ascending</option>
+                                       </select>
+                                    )}
+                                 </div>
+
+                                 {/* Filter */}
+                                 <div>
+                                    <select
+                                       value={filterBy}
+                                       onChange={(e) =>
+                                          setFilterBy(e.target.value)
+                                       }
+                                       className='px-4 py-2 bg-gray-700/50 text-white rounded-lg border border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500'
+                                    >
+                                       <option value=''>Filter by...</option>
+                                       <option value='lastWeek'>
+                                          Last 7 days
+                                       </option>
+                                       <option value='lastMonth'>
+                                          Last 30 days
+                                       </option>
+                                       <option value='highViews'>
+                                          100+ views
+                                       </option>
+                                       <option value='hasGithub'>
+                                          Has Email
+                                       </option>
+                                    </select>
+                                 </div>
+                              </div>
+
+                              {/* Results count */}
+                              <div className='mt-4 text-gray-300'>
+                                 Showing {filteredArticles.length} of{' '}
+                                 {articles.length} articles
+                              </div>
+                           </div>
+
+                           {/* Articles */}
+                           {filteredArticles.map((article, i) => (
                               <div
                                  key={i}
                                  className='bg-gray-600/40 p-8 rounded-lg shadow-lg mt-4 flex flex-items-center justify-between w-full gap-4'
