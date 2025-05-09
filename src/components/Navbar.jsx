@@ -17,7 +17,7 @@ export default function Navbar({ showModal, setShowModal, QR, setQR }) {
    }
 
    return (
-      <nav className='bg-black/20 text-white-100 p-2 sm:p-3 shadow-lg w-full rounded-md border-b border-cyan-500'>
+      <nav className='bg-black/20 text-white-100 p-2 sm:p-3 shadow-lg w-full rounded-md border-b border-cyan-500 lg:max-w-6xl mx-auto'>
          <div className='container mx-auto flex justify-between items-center gap-2 sm:gap-0'>
             {/* Left side: Logo and Title */}
             <div className='flex items-center justify-center gap-2'>
