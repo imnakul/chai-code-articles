@@ -35,8 +35,16 @@ import {
    clearSocials,
 } from '../store/articleSlice.js'
 
+{
+   /* 
+//?? SENDING THROUGH GMAIL API - NEED SETUP PROPER TO USE IT, RIGHT NOW CONNECTED WITH
+//?? vikkasID account added , right now to send, so anyone can send feedback with one click 
+//?? And that will be gone using my id, can make it work for chaicode, detail in notion doc,
+// ?? Right now disabling it and adding manual Sending of mail 
+*/
+}
 const sendEmail = async (authorEmail, title, feedback) => {
-   console.log(authorEmail, title, feedback)
+   console.log('Ab', authorEmail, title, feedback)
    const res = await fetch('/api/sendEmail', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -264,10 +272,9 @@ export default function TagArticleFetcher() {
    //~Authentication Complete
 
    //~ FeedBack submit
-   const handleFeedbackSubmit = async (e) => {
-      e.preventDefault()
-
+   const handleFeedbackSubmit = async (authorEmail, title, feedback) => {
       await sendEmail(authorEmail, title, feedback)
+      setFeedback('')
    }
 
    return (
@@ -286,23 +293,23 @@ export default function TagArticleFetcher() {
                <Modal
                   showModal={showModal}
                   setShowModal={setShowModal}
-                  modalContainerClass=' border-2 border-cyan-500 sm:p-6'
+                  modalContainerClass='w-[90vw] max-w-md border-2 border-cyan-500 p-4 sm:p-6'
                   header='Login / Logout'
                   handleCloseModalOutsideClick={() => setShowModal(false)}
                >
-                  <div className='p-2'>
+                  <div className='p-2 sm:p-4'>
                      {!loggedIn ? (
                         <button
                            onClick={handleLogin}
-                           className='bg-cyan-950  text-cyan-300 font-bold py-2 px-4 rounded-lg border border-cyan-500 mx-auto transition-all  hover:scale-95 duration-300 hover:bg-cyan-800 focus:bg-cyan-800'
+                           className='w-full sm:w-auto bg-cyan-950 text-cyan-300 font-bold py-2 px-4 rounded-lg border border-cyan-500 mx-auto transition-all hover:scale-95 duration-300 hover:bg-cyan-800 focus:bg-cyan-800 flex items-center justify-center gap-2'
                         >
-                           <FaGoogle className='inline mr-2 pb-0.5 ' />
-                           Sign In with Google
+                           <FaGoogle className='text-lg' />
+                           <span>Sign In with Google</span>
                         </button>
                      ) : (
-                        <div className='flex flex-col items-center justify-between gap-2 w-full p-4 space-y-4'>
-                           <div className='flex items-center gap-2'>
-                              <span className='text-white text-base'>
+                        <div className='flex flex-col items-center justify-between gap-4 w-full p-4'>
+                           <div className='flex items-center gap-2 text-center'>
+                              <span className='text-white text-sm sm:text-base'>
                                  Logged In User:
                               </span>
                               <span className='font-semibold text-white'>
@@ -311,7 +318,7 @@ export default function TagArticleFetcher() {
                            </div>
                            <button
                               onClick={handleLogout}
-                              className='bg-cyan-950  text-cyan-300 font-bold py-2 px-4 rounded-lg border border-cyan-500 mx-auto transition-all  hover:scale-95 duration-300 hover:bg-cyan-800 focus:bg-cyan-800'
+                              className='w-full sm:w-auto bg-cyan-950 text-cyan-300 font-bold py-2 px-4 rounded-lg border border-cyan-500 mx-auto transition-all hover:scale-95 duration-300 hover:bg-cyan-800 focus:bg-cyan-800'
                            >
                               Log Out
                            </button>
@@ -326,7 +333,7 @@ export default function TagArticleFetcher() {
                <Modal
                   showModal={QR}
                   setShowModal={setQR}
-                  modalContainerClass={'w-[80vw] sm:w-full sm:max-w-sm sm:p-10'}
+                  modalContainerClass='w-[90vw] sm:w-full sm:max-w-sm p-4 sm:p-6 lg:p-10'
                   closeModalOutsideClick={() => setQR(false)}
                   header='Scan / Click to Give me a Boost'
                >
@@ -334,8 +341,13 @@ export default function TagArticleFetcher() {
                      <a
                         href='https://www.buymeacoffee.com/imnakul'
                         target='_blank'
+                        className='block w-full max-w-[200px] sm:max-w-[288px]'
                      >
-                        <img src='/qr.png' className='size-72' />
+                        <img
+                           src='/qr.png'
+                           className='w-full h-auto'
+                           alt='Buy me a coffee QR code'
+                        />
                      </a>
                   </div>
                </Modal>
@@ -343,16 +355,16 @@ export default function TagArticleFetcher() {
 
             {/* //?? Loading  */}
             {loading ? (
-               <div className='flex flex-col items-center justify-center h-screen'>
-                  <FaSpinner className='text-cyan-400 font-bold text-6xl animate-spin mb-4' />
-                  <p className='text-2xl font-semibold text-white mb-4'>
+               <div className='flex flex-col items-center justify-center min-h-[50vh] px-4 sm:px-6 lg:px-8'>
+                  <FaSpinner className='text-cyan-400 font-bold text-4xl sm:text-5xl lg:text-6xl animate-spin mb-4' />
+                  <p className='text-xl sm:text-2xl font-semibold text-white mb-4 text-center'>
                      Fetching articles...
                   </p>
                   <div className='max-w-md w-full space-y-2 bg-gray-800/50 p-4 rounded-lg'>
                      {progressMessages.map((message, index) => (
                         <p
                            key={index}
-                           className='text-sm text-cyan-300 font-mono'
+                           className='text-xs sm:text-sm text-cyan-300 font-mono'
                            style={{
                               animation: 'fadeIn 0.5s ease-in-out',
                            }}
@@ -364,93 +376,95 @@ export default function TagArticleFetcher() {
                </div>
             ) : (
                <>
-                  {/* //?? FORM  */}
-                  <div className=' max-w-sm md:max-w-3xl lg:max-w-5xl flex flex-col lg:flex lg:flex-row items-center justify-around mx-auto gap-2 lg:gap-20'>
-                     <img
-                        src='/haf.png'
-                        alt='Logo'
-                        className='max-w-xs md:max-w-sm lg:max-w-md hover:scale-105 transition-all duration-800 ease-in-out'
-                     />
-                     <form
-                        onSubmit={handleSubmit}
-                        className='bg-black/20 p-4 md:p-6 lg:p-12 rounded-lg shadow-lg min-w-xs md:min-w-md lg:min-w-xl mx-auto my-12 border-2 border-cyan-500 '
-                     >
-                        <h2 className='text-4xl font-bold mb-8 text-center text-white'>
-                           Find Articles by Tags
-                        </h2>
+                  {/* Form section */}
+                  <div className='max-w-sm md:max-w-3xl lg:max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12'>
+                     <div className='flex flex-col lg:flex-row items-center justify-around gap-6 lg:gap-12'>
+                        <img
+                           src='/haf.png'
+                           alt='Logo'
+                           className='w-full max-w-[200px] sm:max-w-[300px] lg:max-w-md hover:scale-105 transition-all duration-800 ease-in-out'
+                        />
+                        <form
+                           onSubmit={handleSubmit}
+                           className='w-full max-w-xl bg-black/20 p-4 sm:p-6 lg:p-8 rounded-lg shadow-lg border-2 border-cyan-500'
+                        >
+                           <h2 className='text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 sm:mb-8 text-center text-white'>
+                              Find Articles by Tags
+                           </h2>
 
-                        <div className='mb-6'>
-                           <label className=' mb-2 text-white font-medium flex items-center justify-between px-1'>
-                              Tag 1
-                              <span className='text-xs text-gray-400'>
-                                 its tag slug not tag | small letters only
-                              </span>
-                           </label>
-                           <input
-                              type='text'
-                              value={tag1}
-                              onChange={(e) => setTag1(e.target.value)}
-                              className='w-full border border-cyan-500 bg-gray-400/60 px-5 py-3 rounded focus:outline-none focus:ring-2 focus:ring-white-500 text-white'
-                              placeholder='e.g., chaicode, chai-code, qdrant, python ,genai, ai'
-                              required
-                           />
-                        </div>
+                           <div className='space-y-4 sm:space-y-6'>
+                              <div>
+                                 <label className='mb-2 text-white font-medium flex flex-col sm:flex-row sm:items-center sm:justify-between px-1 gap-2'>
+                                    <span>Tag 1</span>
+                                    <span className='text-xs text-gray-400'>
+                                       its tag slug not tag | small letters only
+                                    </span>
+                                 </label>
+                                 <input
+                                    type='text'
+                                    value={tag1}
+                                    onChange={(e) => setTag1(e.target.value)}
+                                    className='w-full border border-cyan-500 bg-gray-400/60 px-4 py-2 sm:py-3 rounded focus:outline-none focus:ring-2 focus:ring-white-500 text-white'
+                                    placeholder='e.g., chaicode, chai-code, qdrant, python ,genai, ai'
+                                    required
+                                 />
+                              </div>
 
-                        <div className='mb-6'>
-                           <label className=' mb-2 text-white font-medium flex items-center justify-between px-1'>
-                              Tag 2
-                              <span className='text-xs text-gray-400'>
-                                 its tag slug not tag | small letters only
-                              </span>
-                           </label>
-                           <input
-                              type='text'
-                              value={tag2}
-                              onChange={(e) => setTag2(e.target.value)}
-                              className='w-full border border-cyan-500 bg-gray-400/60 px-5 py-3 rounded focus:outline-none focus:ring-2 focus:ring-white-500 text-white'
-                              placeholder='e.g., rag , advanced-rag, generative-ai , query-optimization'
-                              required
-                           />
-                        </div>
+                              <div>
+                                 <label className='mb-2 text-white font-medium flex flex-col sm:flex-row sm:items-center sm:justify-between px-1 gap-2'>
+                                    <span>Tag 2</span>
+                                    <span className='text-xs text-gray-400'>
+                                       its tag slug not tag | small letters only
+                                    </span>
+                                 </label>
+                                 <input
+                                    type='text'
+                                    value={tag2}
+                                    onChange={(e) => setTag2(e.target.value)}
+                                    className='w-full border border-cyan-500 bg-gray-400/60 px-4 py-2 sm:py-3 rounded focus:outline-none focus:ring-2 focus:ring-white-500 text-white'
+                                    placeholder='e.g., rag , advanced-rag, generative-ai , query-optimization'
+                                    required
+                                 />
+                              </div>
 
-                        <div className='mb-8'>
-                           <label className='mb-2 text-white font-medium flex items-center justify-between px-1'>
-                              Pages
-                              <span className='text-xs text-gray-400'>
-                                 [ 1 Page = 50 Articles ]
-                              </span>
-                           </label>
-                           <input
-                              type='number'
-                              value={pages}
-                              onChange={(e) => setPages(Number(e.target.value))}
-                              className='w-full border border-cyan-500 bg-gray-400/60 px-5 py-3 rounded focus:outline-none focus:ring-2 focus:ring-white-500 text-white'
-                              min={1}
-                              required
-                           />
-                        </div>
-                        <div className='flex justify-center'>
-                           <button
-                              type='submit'
-                              className=' bg-cyan-950  text-cyan-300 font-bold py-2 px-4 rounded-lg border border-cyan-500 mx-auto transition-all  hover:scale-95 duration-300 hover:bg-cyan-800 focus:bg-cyan-800 cursor-pointer'
-                           >
-                              Search
-                           </button>
-                        </div>
-                     </form>
-                     {/* <img
-                        src='/chaicode.jpg'
-                        alt='Logo'
-                        className='animate-pulse'
-                     /> */}
+                              <div>
+                                 <label className='mb-2 text-white font-medium flex flex-col sm:flex-row sm:items-center sm:justify-between px-1 gap-2'>
+                                    <span>Pages</span>
+                                    <span className='text-xs text-gray-400'>
+                                       [ 1 Page = 50 Articles ]
+                                    </span>
+                                 </label>
+                                 <input
+                                    type='number'
+                                    value={pages}
+                                    onChange={(e) =>
+                                       setPages(Number(e.target.value))
+                                    }
+                                    className='w-full border border-cyan-500 bg-gray-400/60 px-4 py-2 sm:py-3 rounded focus:outline-none focus:ring-2 focus:ring-white-500 text-white'
+                                    min={1}
+                                    required
+                                 />
+                              </div>
+                           </div>
+
+                           <div className='flex justify-center mt-6 sm:mt-8'>
+                              <button
+                                 type='submit'
+                                 className='bg-cyan-950 text-cyan-300 font-bold py-2 px-6 sm:px-8 rounded-lg border border-cyan-500 transition-all hover:scale-95 duration-300 hover:bg-cyan-800 focus:bg-cyan-800 cursor-pointer'
+                              >
+                                 Search
+                              </button>
+                           </div>
+                        </form>
+                     </div>
                   </div>
 
                   {articles.length > 0 && (
                      <>
-                        <div className='max-w-6xl mx-auto space-y-10'>
+                        <div className='max-w-6xl mx-auto space-y-6 sm:space-y-10 px-4 sm:px-6 lg:px-8'>
                            {/* Heading */}
-                           <div className='relative flex items-center justify-center w-full'>
-                              <span className='text-3xl font-semibold text-cyan-200'>
+                           <div className='relative flex flex-col sm:flex-row items-center justify-center w-full gap-4'>
+                              <span className='text-xl sm:text-2xl lg:text-3xl font-semibold text-cyan-200 text-center'>
                                  Found {articles.length} Articles with common
                                  Tags
                               </span>
@@ -462,7 +476,7 @@ export default function TagArticleFetcher() {
                                     dispatch(clearArticles())
                                     dispatch(clearSocials())
                                  }}
-                                 className='absolute right-2 bg-red-900/40 text-red-300 font-bold py-1 px-3 rounded-lg border border-red-500 mx-auto transition-all  hover:scale-95 duration-300 hover:bg-red-700 focus:bg-red-600 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+                                 className='sm:absolute sm:right-2 bg-red-900/40 text-red-300 font-bold py-1 px-3 rounded-lg border border-red-500 transition-all hover:scale-95 duration-300 hover:bg-red-700 focus:bg-red-600 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
                                  disabled={articles.length === 0}
                               >
                                  Reset
@@ -470,10 +484,10 @@ export default function TagArticleFetcher() {
                            </div>
 
                            {/* Control Panel */}
-                           <div className='bg-gray-800/30 p-6 rounded-lg border border-cyan-500'>
-                              <div className='flex flex-col md:flex-row gap-4 items-center justify-between'>
+                           <div className='bg-gray-800/30 p-4 sm:p-6 rounded-lg border border-cyan-500'>
+                              <div className='flex flex-col gap-4'>
                                  {/* Search */}
-                                 <div className='w-full md:w-2/3'>
+                                 <div className='w-full'>
                                     <input
                                        type='text'
                                        placeholder='Search articles...'
@@ -485,74 +499,78 @@ export default function TagArticleFetcher() {
                                     />
                                  </div>
 
-                                 {/* Sort */}
-                                 <div className='flex flex-wrap items-center gap-4 '>
-                                    <select
-                                       value={sortBy}
-                                       onChange={(e) =>
-                                          setSortBy(e.target.value)
-                                       }
-                                       className='px-4 py-2 bg-cyan-950 text-white rounded-lg border border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 '
-                                    >
-                                       <option value=''>Sort by...</option>
-                                       <option value='views'>Views</option>
-                                       <option value='publishedAt'>
-                                          Published Date
-                                       </option>
-                                       <option value='updatedAt'>
-                                          Updated Date
-                                       </option>
-                                       <option value='responseCount'>
-                                          Comments
-                                       </option>
-                                    </select>
-
-                                    {sortBy && (
+                                 <div className='flex flex-col sm:flex-row items-center justify-between gap-4'>
+                                    {/* Sort */}
+                                    <div className='flex flex-wrap items-center gap-4 w-full sm:w-auto'>
                                        <select
-                                          value={sortOrder}
+                                          value={sortBy}
                                           onChange={(e) =>
-                                             setSortOrder(e.target.value)
+                                             setSortBy(e.target.value)
                                           }
-                                          className='px-4 py-2 bg-cyan-950 text-white rounded-lg border border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500'
+                                          className='w-full sm:w-auto px-4 py-2 bg-cyan-950 text-white rounded-lg border border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500'
                                        >
-                                          <option value='desc'>
-                                             Descending
+                                          <option value=''>Sort by...</option>
+                                          <option value='views'>Views</option>
+                                          <option value='publishedAt'>
+                                             Published Date
                                           </option>
-                                          <option value='asc'>Ascending</option>
+                                          <option value='updatedAt'>
+                                             Updated Date
+                                          </option>
+                                          <option value='responseCount'>
+                                             Comments
+                                          </option>
                                        </select>
-                                    )}
+
+                                       {sortBy && (
+                                          <select
+                                             value={sortOrder}
+                                             onChange={(e) =>
+                                                setSortOrder(e.target.value)
+                                             }
+                                             className='w-full sm:w-auto px-4 py-2 bg-cyan-950 text-white rounded-lg border border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500'
+                                          >
+                                             <option value='desc'>
+                                                Descending
+                                             </option>
+                                             <option value='asc'>
+                                                Ascending
+                                             </option>
+                                          </select>
+                                       )}
+                                    </div>
+
+                                    {/* Filter */}
+                                    <div className='w-full sm:w-auto'>
+                                       <select
+                                          value={filterBy}
+                                          onChange={(e) =>
+                                             setFilterBy(e.target.value)
+                                          }
+                                          className='w-full px-4 py-2 bg-cyan-950 text-white rounded-lg border border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500'
+                                       >
+                                          <option value=''>Filter by...</option>
+                                          <option value='lastWeek'>
+                                             Last 7 days
+                                          </option>
+                                          <option value='lastMonth'>
+                                             Last 30 days
+                                          </option>
+                                          <option value='highViews'>
+                                             100+ views
+                                          </option>
+                                          <option value='hasGithub'>
+                                             Has Email
+                                          </option>
+                                       </select>
+                                    </div>
                                  </div>
 
-                                 {/* Filter */}
-                                 <div>
-                                    <select
-                                       value={filterBy}
-                                       onChange={(e) =>
-                                          setFilterBy(e.target.value)
-                                       }
-                                       className='px-4 py-2 bg-cyan-950 text-white rounded-lg border border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500'
-                                    >
-                                       <option value=''>Filter by...</option>
-                                       <option value='lastWeek'>
-                                          Last 7 days
-                                       </option>
-                                       <option value='lastMonth'>
-                                          Last 30 days
-                                       </option>
-                                       <option value='highViews'>
-                                          100+ views
-                                       </option>
-                                       <option value='hasGithub'>
-                                          Has Email
-                                       </option>
-                                    </select>
+                                 {/* Results count */}
+                                 <div className='text-gray-300 text-sm sm:text-base'>
+                                    Showing {filteredArticles.length} of{' '}
+                                    {articles.length} articles
                                  </div>
-                              </div>
-
-                              {/* Results count */}
-                              <div className='mt-4 text-gray-300'>
-                                 Showing {filteredArticles.length} of{' '}
-                                 {articles.length} articles
                               </div>
                            </div>
 
@@ -560,24 +578,23 @@ export default function TagArticleFetcher() {
                            {filteredArticles.map((article, i) => (
                               <div
                                  key={i}
-                                 className='bg-gray-600/40 p-8 rounded-lg shadow-lg mt-4 flex flex-items-center justify-between w-full gap-4'
+                                 className='bg-gray-600/40 p-4 sm:p-6 lg:p-8 rounded-lg shadow-lg mt-4 flex flex-col lg:flex-row items-start justify-between w-full gap-4'
                               >
-                                 {/* //?? ARticle Detail SEctioon  */}
+                                 {/* Article Detail Section */}
                                  <div
-                                    className='w-2/3 p-4 bg-cyan-950 border border-cyan-500 rounded-lg flex flex-col
-                                    justify-around space-y-6                         
-                                 '
+                                    className='w-full lg:w-2/3 p-4 bg-cyan-950 border border-cyan-500 rounded-lg flex flex-col
+                                    justify-around space-y-6'
                                     key={article.title}
                                  >
-                                    {/* //? Author details with Links */}
-                                    <div className='flex items-center '>
+                                    {/* Author details with Links */}
+                                    <div className='flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-0'>
                                        <img
                                           src={article.author.profilePicture}
                                           alt={article.author.name}
-                                          className='w-16 h-16 rounded-full mr-6 object-cover border-2 border-cyan-500'
+                                          className='w-16 h-16 rounded-full sm:mr-6 object-cover border-2 border-cyan-500'
                                        />
                                        <div>
-                                          <p className='font-semibold text-xl text-white'>
+                                          <p className='font-semibold text-lg sm:text-xl text-white'>
                                              {article.author.name}
                                           </p>
                                           <p className='text-sm text-white'>
@@ -649,19 +666,19 @@ export default function TagArticleFetcher() {
                                           </div>
                                        </div>
                                     </div>
-                                    {/* //? Article Title with Link */}
+                                    {/* Article Title with Link */}
                                     <div className=''>
                                        <a
                                           href={article.url}
                                           target='_blank'
                                           rel='noopener noreferrer'
-                                          className='text-3xl font-bold text-cyan-300 hover:underline filter-text-glow-hover'
+                                          className='text-xl sm:text-2xl lg:text-3xl font-bold text-cyan-300 hover:underline filter-text-glow-hover line-clamp-2'
                                        >
                                           {article.title}
                                        </a>
                                     </div>
-                                    {/* //? Details of article  */}
-                                    <div className='text-sm text-white space-y-2 '>
+                                    {/* Details of article */}
+                                    <div className='text-xs sm:text-sm text-white space-y-2'>
                                        <p className=' text-gray-400'>
                                           <strong>Slug:</strong>{' '}
                                           <span className='text-white text-base'>
@@ -695,8 +712,8 @@ export default function TagArticleFetcher() {
                                           </span>
                                        </p>
                                     </div>
-                                    {/* //? Tag Slugs */}
-                                    <div className=' flex flex-wrap gap-3 '>
+                                    {/* Tag Slugs */}
+                                    <div className=' flex flex-wrap gap-2 sm:gap-3'>
                                        {article.tags?.map((tag) => (
                                           <span
                                              key={tag.slug}
@@ -708,20 +725,27 @@ export default function TagArticleFetcher() {
                                     </div>
                                  </div>
 
-                                 {/* //?? Feedback section  */}
-                                 <div className='bg-cyan-950 p-4 rounded-lg shadow-lg border border-cyan-500 w-1/3'>
-                                    {/* <div className='bg-gray-800 p-8 rounded-lg shadow-lg mt-10'> */}
+                                 {/* Feedback section */}
+                                 <div className='bg-cyan-950 p-4 rounded-lg shadow-lg border border-cyan-500 w-full lg:w-1/3'>
                                     <div
                                        className='flex items-center w-full mx-auto'
                                        key={article.title}
                                     >
-                                       <h3 className='text-2xl font-bold text-cyan-300 mb-3  mx-auto'>
+                                       <h3 className='text-xl sm:text-2xl font-bold text-cyan-300 mb-3 mx-auto'>
                                           Feedback Section
                                        </h3>
                                     </div>
                                     <form
-                                       className='space-y-2'
-                                       onSubmit={handleFeedbackSubmit}
+                                       className='space-y-2 sm:space-y-4'
+                                       onSubmit={(e) => {
+                                          e.preventDefault()
+                                          handleFeedbackSubmit(
+                                             socials[article.author.username]
+                                                ?.email,
+                                             `Feedback for: ${article.title}`,
+                                             feedback
+                                          )
+                                       }}
                                     >
                                        <div>
                                           <label
@@ -761,24 +785,6 @@ export default function TagArticleFetcher() {
                                              required
                                           />
                                        </div>
-
-                                       {/* <div>
-                                          <label
-                                             className='block text-gray-300 font-medium mb-2'
-                                             htmlFor='senderEmail'
-                                          >
-                                             Sender Email
-                                          </label>
-                                          <input
-                                             type='email'
-                                             id='senderEmail'
-                                             className='w-full border border-gray-600 bg-gray-400/60 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-white text-white disabled:bg-gray-600 disabled:cursor-not-allowed'
-                                             placeholder='Your email'
-                                             value={userEmail}
-                                             disabled
-                                             required
-                                          />
-                                       </div> */}
 
                                        <div>
                                           <label
@@ -825,7 +831,6 @@ export default function TagArticleFetcher() {
                                           Submit Feedback
                                        </button>
                                     </form>
-                                    {/* </div> */}
                                  </div>
                               </div>
                            ))}
@@ -839,5 +844,3 @@ export default function TagArticleFetcher() {
       </>
    )
 }
-
-// Add this CSS to your styles

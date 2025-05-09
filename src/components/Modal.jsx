@@ -29,8 +29,7 @@ function Modal({
                      onClick={closeModalOutsideClick}
                   />
 
-                  {/*//~ Modal Container */}
-                  <div className='flex min-h-full items-center justify-center p-4'>
+                  {/*//~ Modal Container */}                  <div className='flex min-h-full items-center justify-center p-2 sm:p-4'>
                      <motion.div
                         variants={{
                            hidden: { opacity: 0, y: 40, scale: 0.95 },
@@ -53,7 +52,7 @@ function Modal({
                         initial='hidden'
                         animate='visible'
                         exit='exit'
-                        className={`relative transform overflow-hidden rounded-lg backdrop-blur-lg  px-3 pt-1 pb-3 text-left shadow-xl  sm:p-6 bg-cyan-700/60 ${modalContainerClass}`}
+                        className={`relative transform overflow-hidden rounded-lg backdrop-blur-lg px-3 pt-1 pb-3 text-left shadow-xl sm:p-6 bg-cyan-700/60 max-h-[90vh] overflow-y-auto ${modalContainerClass}`}
                      >
                         {/*//~ Close Button */}
                         <div className='absolute right-0 top-0 pr-4 pt-4'>
