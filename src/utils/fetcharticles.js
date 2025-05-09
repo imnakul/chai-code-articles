@@ -116,8 +116,8 @@ const query = `
 
 //~ Main function
 
-async function fetchAllArticlesByTag(slug, maxPages) {
-   console.log(`🔍 Fetching articles for tag: "${slug}"`)
+async function fetchAllArticlesByTag(slug, maxPages, onProgress) {
+   onProgress?.(`🔍 Fetching articles for tag: "${slug}"`)
    let allArticles = []
    let hasNextPage = true
    let after = null
@@ -151,32 +151,51 @@ async function fetchAllArticlesByTag(slug, maxPages) {
       page++
    }
 
-   console.log(`✅ Total articles fetched for "${slug}": ${allArticles.length}`)
+   onProgress?.(
+      `✅ Total articles fetched for "${slug}": ${allArticles.length}`
+   )
    return allArticles
 }
 
-export async function fetchArticlesWithAllTags(tags = [], maxPages = 10) {
+export async function fetchArticlesWithAllTags(
+   tags = [],
+   maxPages = 10,
+   onProgress
+) {
    if (tags.length === 0) return []
 
-   console.log(`🚀 Starting multi-tag article search: ${tags.join(', ')}`)
+   onProgress?.(`🚀 Starting multi-tag article search: ${tags.join(', ')}`)
 
-   let commonArticles = await fetchAllArticlesByTag(tags[0], maxPages)
+   let commonArticles = await fetchAllArticlesByTag(
+      tags[0],
+      maxPages,
+      onProgress
+   )
+   //  onProgress?.(
+   //     `📊 Found ${commonArticles.length} articles for tag "${tags[0]}"`
+   //  )
 
    for (let i = 1; i < tags.length; i++) {
-      const nextArticles = await fetchAllArticlesByTag(tags[i], maxPages)
+      onProgress?.(`🔍 Searching articles with tag "${tags[i]}"...`)
+      const nextArticles = await fetchAllArticlesByTag(
+         tags[i],
+         maxPages,
+         onProgress
+      )
 
       const urlsInNext = new Set(nextArticles.map((a) => a.url))
       commonArticles = commonArticles.filter((article) =>
          urlsInNext.has(article.url)
       )
 
-      console.log(
-         `🤝 Common articles after tag "${tags[i]}": ${commonArticles.length}`
-      )
+      // onProgress?.(
+      //    `🤝 Found ${commonArticles.length} common articles with tag "${tags[i]}"`
+      // )
    }
 
-   console.log(`🎯 Final common articles: ${commonArticles.length}`)
-
+   onProgress?.(
+      `✅ Search complete! Found ${commonArticles.length} articles with all tags`
+   )
    return commonArticles
 }
 

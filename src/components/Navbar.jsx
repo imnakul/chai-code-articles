@@ -11,6 +11,7 @@ export default function Navbar({ showModal, setShowModal, QR, setQR }) {
    const userInfo = useSelector((state) => state.user.userInfo)
    const loggedIn = useSelector((state) => state.user.loggedIn)
    // console.log(userInfo)
+   const photoUrl = userInfo.photo
 
    return (
       <nav className='bg-black/20 text-white-100 p-1 shadow-lg w-full rounded-md border-b border-cyan-500'>
@@ -32,11 +33,17 @@ export default function Navbar({ showModal, setShowModal, QR, setQR }) {
                <button onClick={handleShowModal} className='flex items-center '>
                   {loggedIn ? (
                      <img
-                        src={`${userInfo.photo}`}
+                        src={
+                           photoUrl || (
+                              <FaUserCircle className='text-cyan-600 size-10 cursor-pointer border-2 border-cyan-500 rounded-full' />
+                           )
+                        }
                         className='w-10 h-10 rounded-full cursor-pointer border-2 border-cyan-500'
                      />
                   ) : (
-                     <FaUserCircle className='text-cyan-600 size-10 cursor-pointer border-2 border-cyan-500 rounded-full' />
+                     <span className='text-cyan-300 border border-cyan-500 rounded-full size-10 text-xs pt-2.5 font-bold cursor-pointer'>
+                        Login
+                     </span>
                   )}
 
                   {/* <span className='text-white ml-2'>

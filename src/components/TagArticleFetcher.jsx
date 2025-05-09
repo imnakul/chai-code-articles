@@ -53,13 +53,14 @@ export default function TagArticleFetcher() {
    const [articles, setArticles] = useState([])
    const [socials, setSocials] = useState({})
    const [showModal, setShowModal] = useState(false)
+   const [progressMessages, setProgressMessages] = useState([])
 
    const [authorEmail, setAuthorEmail] = useState('')
    const [userEmail, setUserEmail] = useState('')
    const [title, setTitle] = useState('')
    const [feedback, setFeedback] = useState('')
    const [loggedIn, setLoggedIn] = useState(false)
-   // const [authToken, setAuthToken] = useState('')
+   const [authToken, setAuthToken] = useState('')
    const [QR, setQR] = useState('')
 
    const userDetail = useSelector((state) => state.user.userInfo)
@@ -76,9 +77,18 @@ export default function TagArticleFetcher() {
       e.preventDefault()
       setLoading(true)
       setArticles([])
+      setProgressMessages([]) // Clear previous messages
 
       try {
-         const result = await fetchArticlesWithAllTags([tag1, tag2], pages)
+         const result = await fetchArticlesWithAllTags(
+            [tag1, tag2],
+            pages,
+            // Progress callback
+            (message) => {
+               setProgressMessages((prev) => [...prev, message])
+            }
+         )
+
          if (result.length === 0) {
             window.alert('No articles found containing both tags.')
          }
@@ -118,6 +128,7 @@ export default function TagArticleFetcher() {
          console.log('Social data', socialData)
       } catch (err) {
          console.error('Error fetching articles:', err)
+         setProgressMessages((prev) => [...prev, `❌ Error: ${err.message}`])
       }
 
       setLoading(false)
@@ -256,13 +267,22 @@ export default function TagArticleFetcher() {
             {loading ? (
                <div className='flex flex-col items-center justify-center h-screen'>
                   <FaSpinner className='text-cyan-400 font-bold text-6xl animate-spin mb-4' />
-                  <p className='text-2xl font-semibold text-white'>
+                  <p className='text-2xl font-semibold text-white mb-4'>
                      Fetching articles...
                   </p>
-                  <p className='text-base text-white mt-2'>
-                     It can take longer than expected, depending on the number
-                     of pages.
-                  </p>
+                  <div className='max-w-md w-full space-y-2 bg-gray-800/50 p-4 rounded-lg'>
+                     {progressMessages.map((message, index) => (
+                        <p
+                           key={index}
+                           className='text-sm text-cyan-300 font-mono'
+                           style={{
+                              animation: 'fadeIn 0.5s ease-in-out',
+                           }}
+                        >
+                           {message}
+                        </p>
+                     ))}
+                  </div>
                </div>
             ) : (
                <>
@@ -650,3 +670,5 @@ export default function TagArticleFetcher() {
       </>
    )
 }
+
+// Add this CSS to your styles
