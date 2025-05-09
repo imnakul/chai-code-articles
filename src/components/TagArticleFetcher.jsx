@@ -32,6 +32,7 @@ import {
    setArticles,
    clearArticles,
    setSocials,
+   clearSocials,
 } from '../store/articleSlice.js'
 
 const sendEmail = async (authorEmail, title, feedback) => {
@@ -435,17 +436,6 @@ export default function TagArticleFetcher() {
                            >
                               Search
                            </button>
-                           <button
-                              onClick={() => {
-                                 setTag1('')
-                                 setTag2('')
-                                 setPages(1)
-                              }}
-                              className='bg-red-950 text-red-300 font-bold py-2 px-4 rounded-lg border border-red-500 mx-auto transition-all  hover:scale-95 duration-300 hover:bg-red-800 focus:bg-red-800 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
-                              disabled={tag1 === '' || tag2 === ''}
-                           >
-                              Reset
-                           </button>
                         </div>
                      </form>
                      {/* <img
@@ -458,18 +448,32 @@ export default function TagArticleFetcher() {
                   {articles.length > 0 && (
                      <>
                         <div className='max-w-6xl mx-auto space-y-10'>
-                           <div className='flex items-center justify-center w-full'>
+                           {/* Heading */}
+                           <div className='relative flex items-center justify-center w-full'>
                               <span className='text-3xl font-semibold text-cyan-200'>
                                  Found {articles.length} Articles with common
                                  Tags
                               </span>
+                              <button
+                                 onClick={() => {
+                                    setTag1('')
+                                    setTag2('')
+                                    setPages(1)
+                                    dispatch(clearArticles())
+                                    dispatch(clearSocials())
+                                 }}
+                                 className='absolute right-2 bg-red-900/40 text-red-300 font-bold py-1 px-3 rounded-lg border border-red-500 mx-auto transition-all  hover:scale-95 duration-300 hover:bg-red-700 focus:bg-red-600 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+                                 disabled={articles.length === 0}
+                              >
+                                 Reset
+                              </button>
                            </div>
 
                            {/* Control Panel */}
                            <div className='bg-gray-800/30 p-6 rounded-lg border border-cyan-500'>
                               <div className='flex flex-col md:flex-row gap-4 items-center justify-between'>
                                  {/* Search */}
-                                 <div className='w-full md:w-1/3'>
+                                 <div className='w-full md:w-2/3'>
                                     <input
                                        type='text'
                                        placeholder='Search articles...'
@@ -477,18 +481,18 @@ export default function TagArticleFetcher() {
                                        onChange={(e) =>
                                           setSearchTerm(e.target.value)
                                        }
-                                       className='w-full px-4 py-2 bg-gray-700/50 text-white rounded-lg border border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500'
+                                       className='w-full px-4 py-2 bg-cyan-950 text-white rounded-lg border border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500'
                                     />
                                  </div>
 
                                  {/* Sort */}
-                                 <div className='flex flex-wrap items-center gap-4'>
+                                 <div className='flex flex-wrap items-center gap-4 '>
                                     <select
                                        value={sortBy}
                                        onChange={(e) =>
                                           setSortBy(e.target.value)
                                        }
-                                       className='px-4 py-2 bg-gray-700/50 text-white rounded-lg border border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500'
+                                       className='px-4 py-2 bg-cyan-950 text-white rounded-lg border border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 '
                                     >
                                        <option value=''>Sort by...</option>
                                        <option value='views'>Views</option>
@@ -509,7 +513,7 @@ export default function TagArticleFetcher() {
                                           onChange={(e) =>
                                              setSortOrder(e.target.value)
                                           }
-                                          className='px-4 py-2 bg-gray-700/50 text-white rounded-lg border border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500'
+                                          className='px-4 py-2 bg-cyan-950 text-white rounded-lg border border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500'
                                        >
                                           <option value='desc'>
                                              Descending
@@ -526,7 +530,7 @@ export default function TagArticleFetcher() {
                                        onChange={(e) =>
                                           setFilterBy(e.target.value)
                                        }
-                                       className='px-4 py-2 bg-gray-700/50 text-white rounded-lg border border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500'
+                                       className='px-4 py-2 bg-cyan-950 text-white rounded-lg border border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500'
                                     >
                                        <option value=''>Filter by...</option>
                                        <option value='lastWeek'>

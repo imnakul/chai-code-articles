@@ -237,149 +237,149 @@ export async function fetchUserSocialLinks(username) {
 //    })
 //    .catch(console.error)
 
-async function logArticles(common) {
-   for (let article of common) {
-      const socialLinks = await fetchUserSocialLinks(article.author.username)
-      article.author.socialMediaLinks = socialLinks
-   }
-   const html = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="UTF-8">
-          <title>Hashnode Articles</title>
-          <style>
-            body {
-              font-family: sans-serif;
-              line-height: 1.6;
-              margin: 2rem;
-              background: #f9f9f9;
-              color: #333;
-            }
-            .article {
-              background: #fff;
-              border: 1px solid #ddd;
-              border-radius: 8px;
-              padding: 1.2rem;
-              margin-bottom: 1.5rem;
-              box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            }
-            .author {
-              display: flex;
-              align-items: center;
-              margin-bottom: 0.8rem;
-            }
-            .author img {
-              border-radius: 50%;
-              width: 36px;
-              height: 36px;
-              margin-right: 0.8rem;
-            }
-            .meta {
-              font-size: 0.9em;
-              color: #666;
-            }
-            .tags {
-              margin-top: 0.5rem;
-            }
-            .tag {
-              display: inline-block;
-              background: #e0f2ff;
-              color: #007acc;
-              padding: 2px 6px;
-              border-radius: 4px;
-              margin-right: 5px;
-              font-size: 0.8em;
-            }
-            .social-links a {
-              margin-right: 10px;
-              text-decoration: none;
-              color: #007acc;
-            }
-          </style>
-        </head>
-        <body>
-          <h1>📦 ${common.length} Articles with Both Tags</h1>
-          ${common
-             .map(
-                (article) => `
-            <div class="article">
-              <div class="author">
-                <img src="${
-                   article.author.profilePicture
-                }" alt="Profile picture of ${article.author.name}" />
-                <div>
-                  <div><strong>${article.author.name}</strong> (@${
-                   article.author.username
-                })</div>
-                  <div class="social-links">
-                    ${
-                       article.author.socialMediaLinks.github
-                          ? `<a href="${article.author.socialMediaLinks.github}" target="_blank">GitHub</a>`
-                          : ''
-                    }
-                    ${
-                       article.author.socialMediaLinks.twitter
-                          ? `<a href="${article.author.socialMediaLinks.twitter}" target="_blank">Twitter</a>`
-                          : ''
-                    }
-                    ${
-                       article.author.socialMediaLinks.linkedin
-                          ? `<a href="${article.author.socialMediaLinks.linkedin}" target="_blank">LinkedIn</a>`
-                          : ''
-                    }
-                    ${
-                       article.author.socialMediaLinks.instagram
-                          ? `<a href="${article.author.socialMediaLinks.instagram}" target="_blank">Instagram</a>`
-                          : ''
-                    }
-                    ${
-                       article.author.socialMediaLinks.facebook
-                          ? `<a href="${article.author.socialMediaLinks.facebook}" target="_blank">Facebook</a>`
-                          : ''
-                    }
-                    ${
-                       article.author.socialMediaLinks.stackoverflow
-                          ? `<a href="${article.author.socialMediaLinks.stackoverflow}" target="_blank">StackOverflow</a>`
-                          : ''
-                    }
-                    ${
-                       article.author.socialMediaLinks.youtube
-                          ? `<a href="${article.author.socialMediaLinks.youtube}" target="_blank">YouTube</a>`
-                          : ''
-                    }
-                  </div>
-                </div>
-              </div>
-              <h2><a href="${article.url}" target="_blank">${
-                   article.title
-                }</a></h2>
-              <div class="meta">
-                <p><strong>Slug:</strong> ${article.slug}</p>
-                <p><strong>Published:</strong> ${new Date(
-                   article.publishedAt
-                ).toLocaleString()}</p>
-                <p><strong>Updated:</strong> ${new Date(
-                   article.updatedAt
-                ).toLocaleString()}</p>
-                <p><strong>Views:</strong> ${
-                   article.views ?? 'N/A'
-                } | <strong>Comments:</strong> ${article.responseCount}</p>
-              </div>
-              <div class="tags">
-                ${article.tags
-                   .map((tag) => `<span class="tag">#${tag.slug}</span>`)
-                   .join('')}
-              </div>
-            </div>
-          `
-             )
-             .join('')}
-        </body>
-      </html>
-    `.trim()
+// async function logArticles(common) {
+//    for (let article of common) {
+//       const socialLinks = await fetchUserSocialLinks(article.author.username)
+//       article.author.socialMediaLinks = socialLinks
+//    }
+//    const html = `
+//       <!DOCTYPE html>
+//       <html>
+//         <head>
+//           <meta charset="UTF-8">
+//           <title>Hashnode Articles</title>
+//           <style>
+//             body {
+//               font-family: sans-serif;
+//               line-height: 1.6;
+//               margin: 2rem;
+//               background: #f9f9f9;
+//               color: #333;
+//             }
+//             .article {
+//               background: #fff;
+//               border: 1px solid #ddd;
+//               border-radius: 8px;
+//               padding: 1.2rem;
+//               margin-bottom: 1.5rem;
+//               box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+//             }
+//             .author {
+//               display: flex;
+//               align-items: center;
+//               margin-bottom: 0.8rem;
+//             }
+//             .author img {
+//               border-radius: 50%;
+//               width: 36px;
+//               height: 36px;
+//               margin-right: 0.8rem;
+//             }
+//             .meta {
+//               font-size: 0.9em;
+//               color: #666;
+//             }
+//             .tags {
+//               margin-top: 0.5rem;
+//             }
+//             .tag {
+//               display: inline-block;
+//               background: #e0f2ff;
+//               color: #007acc;
+//               padding: 2px 6px;
+//               border-radius: 4px;
+//               margin-right: 5px;
+//               font-size: 0.8em;
+//             }
+//             .social-links a {
+//               margin-right: 10px;
+//               text-decoration: none;
+//               color: #007acc;
+//             }
+//           </style>
+//         </head>
+//         <body>
+//           <h1>📦 ${common.length} Articles with Both Tags</h1>
+//           ${common
+//              .map(
+//                 (article) => `
+//             <div class="article">
+//               <div class="author">
+//                 <img src="${
+//                    article.author.profilePicture
+//                 }" alt="Profile picture of ${article.author.name}" />
+//                 <div>
+//                   <div><strong>${article.author.name}</strong> (@${
+//                    article.author.username
+//                 })</div>
+//                   <div class="social-links">
+//                     ${
+//                        article.author.socialMediaLinks.github
+//                           ? `<a href="${article.author.socialMediaLinks.github}" target="_blank">GitHub</a>`
+//                           : ''
+//                     }
+//                     ${
+//                        article.author.socialMediaLinks.twitter
+//                           ? `<a href="${article.author.socialMediaLinks.twitter}" target="_blank">Twitter</a>`
+//                           : ''
+//                     }
+//                     ${
+//                        article.author.socialMediaLinks.linkedin
+//                           ? `<a href="${article.author.socialMediaLinks.linkedin}" target="_blank">LinkedIn</a>`
+//                           : ''
+//                     }
+//                     ${
+//                        article.author.socialMediaLinks.instagram
+//                           ? `<a href="${article.author.socialMediaLinks.instagram}" target="_blank">Instagram</a>`
+//                           : ''
+//                     }
+//                     ${
+//                        article.author.socialMediaLinks.facebook
+//                           ? `<a href="${article.author.socialMediaLinks.facebook}" target="_blank">Facebook</a>`
+//                           : ''
+//                     }
+//                     ${
+//                        article.author.socialMediaLinks.stackoverflow
+//                           ? `<a href="${article.author.socialMediaLinks.stackoverflow}" target="_blank">StackOverflow</a>`
+//                           : ''
+//                     }
+//                     ${
+//                        article.author.socialMediaLinks.youtube
+//                           ? `<a href="${article.author.socialMediaLinks.youtube}" target="_blank">YouTube</a>`
+//                           : ''
+//                     }
+//                   </div>
+//                 </div>
+//               </div>
+//               <h2><a href="${article.url}" target="_blank">${
+//                    article.title
+//                 }</a></h2>
+//               <div class="meta">
+//                 <p><strong>Slug:</strong> ${article.slug}</p>
+//                 <p><strong>Published:</strong> ${new Date(
+//                    article.publishedAt
+//                 ).toLocaleString()}</p>
+//                 <p><strong>Updated:</strong> ${new Date(
+//                    article.updatedAt
+//                 ).toLocaleString()}</p>
+//                 <p><strong>Views:</strong> ${
+//                    article.views ?? 'N/A'
+//                 } | <strong>Comments:</strong> ${article.responseCount}</p>
+//               </div>
+//               <div class="tags">
+//                 ${article.tags
+//                    .map((tag) => `<span class="tag">#${tag.slug}</span>`)
+//                    .join('')}
+//               </div>
+//             </div>
+//           `
+//              )
+//              .join('')}
+//         </body>
+//       </html>
+//     `.trim()
 
-   const logFilePath = path.resolve('./articles_with_social.log.html')
-   await fs.writeFile(logFilePath, html)
-   console.log(`📝 Log saved to ${logFilePath} — open in browser to view.`)
-}
+//    const logFilePath = path.resolve('./articles_with_social.log.html')
+//    await fs.writeFile(logFilePath, html)
+//    console.log(`📝 Log saved to ${logFilePath} — open in browser to view.`)
+// }

@@ -22,7 +22,7 @@ export default function Navbar({ showModal, setShowModal, QR, setQR }) {
             {/* Left side: Logo and Title */}
             <div className='flex items-center justify-center gap-2'>
                <img
-                  src='/logo2.png'
+                  src='/logo3.png'
                   alt='Logo'
                   className='size-15 filter-glow'
                />
