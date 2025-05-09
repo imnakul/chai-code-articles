@@ -34,6 +34,7 @@ import {
    setSocials,
    clearSocials,
 } from '../store/articleSlice.js'
+import Feedback from './Feedback.jsx'
 
 {
    /* 
@@ -43,21 +44,21 @@ import {
 // ?? Right now disabling it and adding manual Sending of mail 
 */
 }
-const sendEmail = async (authorEmail, title, feedback) => {
-   console.log('Ab', authorEmail, title, feedback)
-   const res = await fetch('/api/sendEmail', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-         to: 'imnakul44@gmail.com',
-         subject: title,
-         message: feedback,
-      }),
-   })
+// const sendEmail = async (authorEmail, title, feedback) => {
+//    console.log('Ab', authorEmail, title, feedback)
+//    const res = await fetch('/api/sendEmail', {
+//       method: 'POST',
+//       headers: { 'Content-Type': 'application/json' },
+//       body: JSON.stringify({
+//          to: 'imnakul44@gmail.com',
+//          subject: title,
+//          message: feedback,
+//       }),
+//    })
 
-   const data = await res.json()
-   console.log(data)
-}
+//    const data = await res.json()
+//    console.log(data)
+// }
 
 export default function TagArticleFetcher() {
    const [tag1, setTag1] = useState('')
@@ -272,8 +273,23 @@ export default function TagArticleFetcher() {
    //~Authentication Complete
 
    //~ FeedBack submit
+   // const handleFeedbackSubmit = async (authorEmail, title, feedback) => {
+   //    await sendEmail(authorEmail, title, feedback)
+   //    setFeedback('')
+
+   // }
+
    const handleFeedbackSubmit = async (authorEmail, title, feedback) => {
-      await sendEmail(authorEmail, title, feedback)
+      e.preventDefault()
+
+      const mailtoLink = `mailto:${authorEmail}?subject=${encodeURIComponent(
+         title
+      )}&body=${encodeURIComponent(`Message:${feedback}`)}`
+      console.log('m2l', mailtoLink)
+      // Open the mail client
+      window.location.href = mailtoLink
+      window.alert('Feedback Sent Successfully!')
+      // Reset form
       setFeedback('')
    }
 

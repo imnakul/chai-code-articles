@@ -17,7 +17,7 @@ function Feedback() {
       console.log('m2l', mailtoLink)
       // Open the mail client
       window.location.href = mailtoLink
-
+      alert('Feedback sent Successfully!')
       // Reset form
       setName('')
       setTitle('')
