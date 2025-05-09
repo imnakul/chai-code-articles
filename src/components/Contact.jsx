@@ -5,29 +5,29 @@ const socials = [
       social: 'github',
       url: 'https://github.com/imnakul',
       icon: (
-         <RiGithubFill className='size-7 text-gray-900 dark:text-gray-300' />
+         <RiGithubFill className='size-7 text-gray-300 hover:text-cyan-300' />
       ),
    },
    {
       social: 'linked-In',
       url: 'https://www.linkedin.com/in/nakul-srivastava-a7426033b',
       icon: (
-         <RiLinkedinFill className='size-7 text-gray-900 dark:text-gray-300' />
+         <RiLinkedinFill className='size-7 text-gray-300 hover:text-cyan-300' />
       ),
    },
    {
       social: 'twitter',
       url: 'https://t.me/i_m_nakul',
       icon: (
-         <RiTelegram2Fill className='size-7 text-gray-900 dark:text-gray-300' />
+         <RiTelegram2Fill className='size-7 text-gray-300 hover:text-cyan-300' />
       ),
    },
 ]
 
 function ContactDetails() {
    return (
-      <div className='glass-effect bg-black/30 rounded-xl p-2 card-glow h-full'>
-         <p className=' text-gray-900 dark:text-gray-300 mb-6 inter'>
+      <div className='glass-effect bg-black/30 rounded-xl px-2 py-4 card-glow h-full'>
+         <p className=' text-gray-300  mb-6 inter'>
             I'm always open to new opportunities and collaborations. Feel free
             to reach out if you have a project in mind or just want to connect!
          </p>
@@ -50,14 +50,12 @@ function ContactDetails() {
                         />
                      </svg>
                   </div>
-                  <span className='text-gray-900 dark:text-gray-300 inter'>
-                     Nakul Srivastava
-                  </span>
+                  <span className='text-cyan-300  inter'>Nakul Srivastava</span>
                </div>
                <a
                   href='https://nakul-srivastava-dev.vercel.app/'
                   target='_blank'
-                  className={`text-gray-900 dark:text-gray-300 rounded-md w-24 flex items-center justify-center cursor-pointer   transition-colors duration-300   hover:opacity-80 hover:scale-105 active:scale-95 py-1 px-2 space-grotesk text-sm border border-solid border-gray-900 dark:border-gray-300 mr-4`}
+                  className={`text-cyan-300 rounded-md w-24 flex items-center justify-center cursor-pointer   transition-colors duration-300   hover:opacity-80 hover:scale-105 active:scale-95 py-1 px-2 space-grotesk text-sm border border-solid border-cyan-900 dark:border-gray-300 mr-4`}
                >
                   Portfolio
                   {/* <ArrowUpRight className='ml-1 size-5' /> */}
@@ -77,9 +75,7 @@ function ContactDetails() {
                      <path d='M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z' />
                   </svg>
                </div>
-               <span className='text-gray-900 dark:text-gray-300 inter'>
-                  imnakul44@gmail.com
-               </span>
+               <span className='text-cyan-300 inter'>imnakul44@gmail.com</span>
                <a
                   href='mailto:imnakul44@gmail.com'
                   className={`rounded-md flex items-center justify-center cursor-pointer transition-colors duration-300 hover:opacity-80 hover:scale-105 active:scale-95 p-1 ml-3 text-gray-900 dark:text-gray-300`}
@@ -105,9 +101,7 @@ function ContactDetails() {
                      />
                   </svg>
                </div>
-               <span className='text-gray-900 dark:text-gray-300 inter'>
-                  Meerut, INDIA
-               </span>
+               <span className='text-cyan-300 inter'>Meerut, INDIA</span>
             </div>
          </div>
          <div className='flex justify-center space-x-6 mt-8'>
@@ -116,7 +110,7 @@ function ContactDetails() {
                   key={index}
                   href={social.url}
                   target='_blank'
-                  className={`size-14 rounded-full flex items-center justify-center cursor-pointer   transition-colors duration-300  hover:opacity-80 hover:scale-105 active:scale-95 `}
+                  className={`size-14 rounded-full flex items-center justify-center cursor-pointer   transition-colors duration-300  hover:scale-110 active:scale-95 `}
                >
                   {social.icon}
                </a>
