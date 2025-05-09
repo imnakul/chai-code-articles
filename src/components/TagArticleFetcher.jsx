@@ -25,9 +25,10 @@ import {
    getIdToken,
 } from 'firebase/auth'
 import { useDispatch } from 'react-redux'
-import { login } from '../store/userSlice.js'
+import { login, logout } from '../store/userSlice.js'
 import { useSelector } from 'react-redux'
 import { Footer } from './Footer.jsx'
+import { setArticles, clearArticles } from '../store/articleSlice.js'
 
 const sendEmail = async (authorEmail, title, feedback) => {
    console.log(authorEmail, title, feedback)
@@ -50,7 +51,6 @@ export default function TagArticleFetcher() {
    const [tag2, setTag2] = useState('')
    const [pages, setPages] = useState(5)
    const [loading, setLoading] = useState(false)
-   const [articles, setArticles] = useState([])
    const [socials, setSocials] = useState({})
    const [showModal, setShowModal] = useState(false)
    const [progressMessages, setProgressMessages] = useState([])
@@ -64,19 +64,20 @@ export default function TagArticleFetcher() {
    const [QR, setQR] = useState('')
 
    const userDetail = useSelector((state) => state.user.userInfo)
+   const articles = useSelector((state) => state.article.articles)
+   const dispatch = useDispatch()
+
    useEffect(() => {
       if (userEmail) {
          setUserEmail(userDetail.email)
       }
    }, [userDetail])
 
-   const dispatch = useDispatch()
-
    //~ Fetching Articles
    const handleSubmit = async (e) => {
       e.preventDefault()
       setLoading(true)
-      setArticles([])
+      dispatch(clearArticles())
       setProgressMessages([]) // Clear previous messages
 
       try {
@@ -92,7 +93,7 @@ export default function TagArticleFetcher() {
          if (result.length === 0) {
             window.alert('No articles found containing both tags.')
          }
-         setArticles(result)
+         dispatch(setArticles(result))
 
          const usernames = [
             ...new Set(result.map((article) => article.author.username)),
@@ -156,7 +157,6 @@ export default function TagArticleFetcher() {
          const result = await signInWithPopup(auth, provider)
          const user = result.user
          const token = await getIdToken(user)
-         dispatch
 
          const userInfo = {
             name: user.displayName,
