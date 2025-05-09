@@ -49,7 +49,7 @@ const sendEmail = async (authorEmail, title, feedback) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-         to: authorEmail,
+         to: 'imnakul44@gmail.com',
          subject: title,
          message: feedback,
       }),
