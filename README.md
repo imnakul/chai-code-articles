@@ -7,6 +7,8 @@ Live at: [Hashnode-Article-Finder](https://hashnode-article-fetcher.vercel.app/)
 
 Demo: [Video demo](https://github.com/user-attachments/assets/3bf4fb77-fe3e-4663-ace4-207313e01a0a)
 
+![HashnodeArtileFinder](https://github.com/user-attachments/assets/74e0b47e-637a-4d22-b0b2-e01d7c1a6b0c)
+
 ## Features 
 - **Article Search on Hashnode using Tags**
 - **Perosonlized Feedback in Students Mailbox with single Click**
@@ -61,5 +63,5 @@ will take max 10 minutes, after that, anyone from your organization, can send Fe
 reach student Mail Inbox, with same Id. So, Uniformity in Feedback.
 
 ## Contact:
-Checkout Github Profile
+Checkout [Github Profile](https://github.com/imnakul)
 
