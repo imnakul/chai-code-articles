@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
    fetchArticlesWithAllTags,
    fetchUserSocialLinks,
@@ -13,10 +13,10 @@ import {
    FaSpinner,
    FaGoogle,
 } from 'react-icons/fa'
-import { MdArrowOutward } from 'react-icons/md'
+// import { MdArrowOutward } from 'react-icons/md'
 import Navbar from './Navbar'
 import Modal from './Modal'
-import { FaUserCircle } from 'react-icons/fa'
+// import { FaUserCircle } from 'react-icons/fa'
 import { auth, provider } from '../utils/firebaseConfig.js'
 import {
    signInWithPopup,
@@ -34,7 +34,7 @@ import {
    setSocials,
    clearSocials,
 } from '../store/articleSlice.js'
-import Feedback from './Feedback.jsx'
+// import Feedback from './Feedback.jsx'
 
 {
    /* 
@@ -80,6 +80,8 @@ export default function TagArticleFetcher() {
    const [sortBy, setSortBy] = useState('')
    const [sortOrder, setSortOrder] = useState('desc')
    const [filterBy, setFilterBy] = useState('')
+   const [currentPage, setCurrentPage] = useState(1)
+   const [articlesPerPage] = useState(5)
    const userDetail = useSelector((state) => state.user.userInfo)
    const articles = useSelector((state) => state.article.articles)
    const socials = useSelector((state) => state.article.socials)
@@ -219,8 +221,110 @@ export default function TagArticleFetcher() {
       return result
    }
 
-   // Get filtered articles
+   // Get filtered articles and pagination data
    const filteredArticles = getFilteredAndSortedArticles()
+   const totalArticles = filteredArticles.length
+   const totalPages = Math.ceil(totalArticles / articlesPerPage)
+
+   // Get current articles for the page
+   const indexOfLastArticle = currentPage * articlesPerPage
+   const indexOfFirstArticle = indexOfLastArticle - articlesPerPage
+   const currentArticles = filteredArticles.slice(
+      indexOfFirstArticle,
+      indexOfLastArticle
+   )
+
+   // Change page
+   const handlePageChange = (pageNumber) => {
+      setCurrentPage(pageNumber)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+   }
+
+   // Pagination component
+   const PaginationControls = () => {
+      const pageNumbers = []
+      const maxDisplayedPages = 5
+
+      // Logic for displaying page numbers
+      let startPage = Math.max(
+         1,
+         currentPage - Math.floor(maxDisplayedPages / 2)
+      )
+      let endPage = Math.min(totalPages, startPage + maxDisplayedPages - 1)
+
+      if (endPage - startPage + 1 < maxDisplayedPages) {
+         startPage = Math.max(1, endPage - maxDisplayedPages + 1)
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+         pageNumbers.push(i)
+      }
+
+      return (
+         <div className='flex flex-wrap items-center justify-center gap-2 mt-6'>
+            {/* Previous button */}
+            <button
+               onClick={() => handlePageChange(currentPage - 1)}
+               disabled={currentPage === 1}
+               className='px-3 py-1 rounded-md border border-cyan-500 bg-cyan-950 text-cyan-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-cyan-800 transition-colors'
+            >
+               Previous
+            </button>
+
+            {/* First page */}
+            {startPage > 1 && (
+               <>
+                  <button
+                     onClick={() => handlePageChange(1)}
+                     className={`px-3 py-1 rounded-md border border-cyan-500 bg-cyan-950 text-cyan-300 hover:bg-cyan-800 transition-colors`}
+                  >
+                     1
+                  </button>
+                  {startPage > 2 && <span className='text-cyan-300'>...</span>}
+               </>
+            )}
+
+            {/* Page numbers */}
+            {pageNumbers.map((number) => (
+               <button
+                  key={number}
+                  onClick={() => handlePageChange(number)}
+                  className={`px-3 py-1 rounded-md border ${
+                     currentPage === number
+                        ? 'bg-cyan-600 text-white border-cyan-400'
+                        : 'border-cyan-500 bg-cyan-950 text-cyan-300 hover:bg-cyan-800'
+                  } transition-colors`}
+               >
+                  {number}
+               </button>
+            ))}
+
+            {/* Last page */}
+            {endPage < totalPages && (
+               <>
+                  {endPage < totalPages - 1 && (
+                     <span className='text-cyan-300'>...</span>
+                  )}
+                  <button
+                     onClick={() => handlePageChange(totalPages)}
+                     className={`px-3 py-1 rounded-md border border-cyan-500 bg-cyan-950 text-cyan-300 hover:bg-cyan-800 transition-colors`}
+                  >
+                     {totalPages}
+                  </button>
+               </>
+            )}
+
+            {/* Next button */}
+            <button
+               onClick={() => handlePageChange(currentPage + 1)}
+               disabled={currentPage === totalPages}
+               className='px-3 py-1 rounded-md border border-cyan-500 bg-cyan-950 text-cyan-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-cyan-800 transition-colors'
+            >
+               Next
+            </button>
+         </div>
+      )
+   }
 
    //~ Authentication - Login + Logout
    useEffect(() => {
@@ -591,14 +695,18 @@ export default function TagArticleFetcher() {
 
                                     {/* Results count */}
                                     <div className='text-gray-300 text-sm sm:text-base'>
-                                       Showing {filteredArticles.length} of{' '}
-                                       {articles.length} articles
+                                       Showing {indexOfFirstArticle + 1} -{' '}
+                                       {Math.min(
+                                          indexOfLastArticle,
+                                          filteredArticles.length
+                                       )}{' '}
+                                       of {filteredArticles.length} articles
                                     </div>
                                  </div>
                               </div>
 
                               {/* Articles */}
-                              {filteredArticles.map((article, i) => (
+                              {currentArticles.map((article, i) => (
                                  <div
                                     key={i}
                                     className='bg-gray-600/40 p-4 sm:p-6 lg:p-8 rounded-lg shadow-lg mt-4 flex flex-col lg:flex-row items-start justify-between w-full gap-4'
@@ -719,19 +827,38 @@ export default function TagArticleFetcher() {
                                           <p className=' text-gray-400'>
                                              <strong>Published:</strong>{' '}
                                              <span className='text-white text-base'>
-                                                {new Date(
+                                                {/* {new Date(
                                                    article.publishedAt
-                                                ).toLocaleString()}
+                                                ).toLocaleString()} */}
+
+                                                {new Date(article.publishedAt)
+                                                   .toLocaleString('en-GB', {
+                                                      day: '2-digit',
+                                                      month: 'long',
+                                                      year: 'numeric',
+                                                      hour: 'numeric',
+                                                      minute: '2-digit',
+                                                      hour12: true,
+                                                   })
+                                                   .replace(',', ' at')}
                                              </span>
                                           </p>
-                                          <p className=' text-gray-400'>
+                                          {/* <p className=' text-gray-400'>
                                              <strong>Updated:</strong>{' '}
                                              <span className='text-white text-base'>
-                                                {new Date(
-                                                   article.updatedAt
-                                                ).toLocaleString()}
+                                                
+                                                {new Date(article.updatedAt)
+                                                   .toLocaleString('en-GB', {
+                                                      day: '2-digit',
+                                                      month: 'long',
+                                                      year: 'numeric',
+                                                      hour: 'numeric',
+                                                      minute: '2-digit',
+                                                      hour12: true,
+                                                   })
+                                                   .replace(',', ' at')}
                                              </span>
-                                          </p>
+                                          </p> */}
                                           <p className=' text-gray-400'>
                                              <strong>Views:</strong>{' '}
                                              <span className='text-white text-base'>
@@ -868,6 +995,7 @@ export default function TagArticleFetcher() {
                                     </div>
                                  </div>
                               ))}
+                              <PaginationControls />
                            </div>
                         </>
                      )}
